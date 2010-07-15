@@ -2,6 +2,8 @@
 .*
 # except for .gitignore
 !.gitignore
+# and .svnignore
+!.svnignore
 # ignore python bytecode
 *.pyc
 # ignore local settings
