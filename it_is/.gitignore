@@ -1,0 +1,8 @@
+# ignore all dotfiles...
+.*
+# except for .gitignore
+!.gitignore
+# ignore python bytecode
+*.pyc
+# ignore local settings
+local_settings.py

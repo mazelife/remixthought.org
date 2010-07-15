@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{%block title%}It is.{%endblock%}</title>
+  <link rel="stylesheet" href="{{MEDIA_URL}}styles/reset.css" media="all">
+  <link rel="stylesheet" href="{{MEDIA_URL}}styles/global.css" media="screen">
+  <link rel="stylesheet" href="{{MEDIA_URL}}styles/mobile.css" media="handheld">
+  <link rel="stylesheet" href="{{MEDIA_URL}}styles/print.css" media="print">
+  <script src="{{MEDIA_URL}}scripts/jquery.min.js"></script>
+  <script src="{{MEDIA_URL}}scripts/jquery.featuresupport.js"></script>
+  {%block head%}{%endblock%}
+</head>
+<body>
+    <header>
+        <h1>What <strong>it is</strong> according to <div id="tag-selector">Everything</div></h1>
+        <nav>
+            <ul>
+                <li><a href="#">Download Data &gt;</a></li>
+                <li><a href="#">About &gt;</a></li>
+                <li><a href="#">Share This &gt;</a></li>
+            </ul>
+        </nav>
+        <div id="add-statement">Add Statements</div>
+    </header>
+    {%block content%}{%endblock%}
+    <script>var MEDIA_URL = "{{MEDIA_URL}}";</script>
+    <script src="{{MEDIA_URL}}scripts/statements.js"></script>
+</body>
+</html>

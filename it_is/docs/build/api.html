@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>JSON Api &mdash; It Is. v1.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="It Is. v1.0 documentation" href="index.html" />
+    <link rel="prev" title="Welcome to It Is." href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to It Is."
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">It Is. v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="json-api">
+<h1>JSON Api<a class="headerlink" href="#json-api" title="Permalink to this headline">¶</a></h1>
+<p><em>It Is</em> provides the following data in JSON format:</p>
+<div class="section" id="statements">
+<h2>Statements<a class="headerlink" href="#statements" title="Permalink to this headline">¶</a></h2>
+<p>Fetch a list of the last <tt class="docutils literal"><span class="pre">n</span></tt> statements:</p>
+<div class="highlight-python"><pre>/api/statements/n/</pre>
+</div>
+<p>Fetch a list of the last <tt class="docutils literal"><span class="pre">n</span></tt> statements by tag <tt class="docutils literal"><span class="pre">s</span></tt>:</p>
+<div class="highlight-python"><pre>/api/statements/n/?tag=s</pre>
+</div>
+<p>You can fetch a list of the last <tt class="docutils literal"><span class="pre">n1</span></tt> statements offset by <tt class="docutils literal"><span class="pre">n2</span></tt> (while still restricting by tag):</p>
+<div class="highlight-python"><pre>/api/statements/n1/?offset=n2</pre>
+</div>
+<p>You can also fetch a list of the last <tt class="docutils literal"><span class="pre">n1</span></tt> statements offset by <tt class="docutils literal"><span class="pre">n2</span></tt> while still restricting by tag:</p>
+<div class="highlight-python"><pre>/api/statements/n/?offset=n2&amp;tag=s</pre>
+</div>
+<div class="section" id="returned-data-structure">
+<h3>Returned Data Structure<a class="headerlink" href="#returned-data-structure" title="Permalink to this headline">¶</a></h3>
+<p>Statements are always returned as an array of JSON objects. A GET request to a URL like <tt class="docutils literal"><span class="pre">/statements/5/tag/computer-science/</span></tt> would return something like this:</p>
+<div class="highlight-python"><pre>[
+    {id: 345, statement: "It is fun.", tag: ['computer-science', 'Computer Science']},
+    {id: 320, statement: "It is often boring.", tag: ['computer-science', 'Computer Science']},
+    {id: 278, statement: "It is necessary to know math.", tag: ['computer-science', 'Computer Science']},
+    {id: 277, statement: "It is analytic.", tag: ['computer-science', 'Computer Science']},
+    {id: 5, statement: "It is all about computers.", tag: ['computer-science', 'Computer Science']},
+
+}</pre>
+</div>
+<p>Note that tag data is returned as a list of two values: the <em>slug</em> for the tag, which can be used to construct a URL or query and the tag <em>display name</em>.</p>
+</div>
+<div class="section" id="how-offsets-are-handled">
+<h3>How offsets are handled<a class="headerlink" href="#how-offsets-are-handled" title="Permalink to this headline">¶</a></h3>
+<p>Any set of statements is necessarily finite. So, if you request an offset which exceeds the size of the set, the API returns a 404 error with the message &#8220;offset too large&#8221;. For example, you are requesting a sets of tagged statements in increments of 10:</p>
+<div class="highlight-python"><pre>/api/statements/10/?tag=computer-science</pre>
+</div>
+<p>There are 100 total statements tagged this way. So this call would result in a 404:</p>
+<div class="highlight-python"><pre>/api/statements/10/?tag=computer-science&amp;offset=11</pre>
+</div>
+</div>
+<div class="section" id="item-counts">
+<h3>Item counts<a class="headerlink" href="#item-counts" title="Permalink to this headline">¶</a></h3>
+<p>You can get counts of the number of items in the full set:</p>
+<div class="highlight-python"><pre>/api/statements/count/
+
+100</pre>
+</div>
+<p>And you can get the number of items from a tag subset:</p>
+<div class="highlight-python"><pre>/api/statements/count/?tag=computer-science
+
+18</pre>
+</div>
+</div>
+</div>
+<div class="section" id="tags">
+<h2>Tags<a class="headerlink" href="#tags" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="searching-for-tags">
+<h3>Searching for tags<a class="headerlink" href="#searching-for-tags" title="Permalink to this headline">¶</a></h3>
+<p>You can retrieve a list of tags which matches a query string <tt class="docutils literal"><span class="pre">s</span></tt>:</p>
+<div class="highlight-python"><pre>/api/tags/search/s/</pre>
+</div>
+<p>This will return an array of matching (<tt class="docutils literal"><span class="pre">slug</span></tt>, <tt class="docutils literal"><span class="pre">display</span> <span class="pre">name</span></tt>) pairs in alphabetical order:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span>
+    <span class="p">[</span><span class="s">&quot;philology&quot;</span><span class="p">,</span> <span class="s">&quot;philology&quot;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s">&quot;philosophy&quot;</span><span class="p">,</span> <span class="s">&quot;philosophy&quot;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s">&quot;philadelphia-flyers&quot;</span><span class="p">,</span> <span class="s">&quot;Philadelphia Flyers&quot;</span><span class="p">]</span>
+
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="all-tags">
+<h3>All tags<a class="headerlink" href="#all-tags" title="Permalink to this headline">¶</a></h3>
+<p>The following URL returns a list of all tags in the list of (<tt class="docutils literal"><span class="pre">slug</span></tt>, <tt class="docutils literal"><span class="pre">display</span> <span class="pre">name</span></tt>) pairs format:</p>
+<div class="highlight-python"><pre>/api/tags/</pre>
+</div>
+</div>
+<div class="section" id="most-used">
+<h3>Most Used<a class="headerlink" href="#most-used" title="Permalink to this headline">¶</a></h3>
+<p>This URL will return a list of the most-used tags:</p>
+<div class="highlight-python"><pre>/api/tags/popular/</pre>
+</div>
+<p>By default this will return the 20 most used tags, but you can regulate the number with a count parameter:</p>
+<div class="highlight-python"><pre>api/tags/popular/?count=5</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">JSON Api</a><ul>
+<li><a class="reference external" href="#statements">Statements</a><ul>
+<li><a class="reference external" href="#returned-data-structure">Returned Data Structure</a></li>
+<li><a class="reference external" href="#how-offsets-are-handled">How offsets are handled</a></li>
+<li><a class="reference external" href="#item-counts">Item counts</a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#tags">Tags</a><ul>
+<li><a class="reference external" href="#searching-for-tags">Searching for tags</a></li>
+<li><a class="reference external" href="#all-tags">All tags</a></li>
+<li><a class="reference external" href="#most-used">Most Used</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="index.html"
+                                  title="previous chapter">Welcome to It Is.</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/api.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to It Is."
+             >previous</a> |</li>
+        <li><a href="index.html">It Is. v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, James Stevenson.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.1.
+    </div>
+  </body>
+</html>
