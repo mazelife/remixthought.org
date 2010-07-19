@@ -4,4 +4,4 @@ django-coverage
 PyYAML==3.09
 nltk==2.0b8
 recaptcha-client==1.0.3
-recaptcha-django==0.1
+-e svn+http://recaptcha-django.googlecode.com/svn/trunk/#egg=recaptcha_django
