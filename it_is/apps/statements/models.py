@@ -62,7 +62,8 @@ class Statement(models.Model):
 
 class Tag(models.Model):
     slug = models.SlugField(_("Slug"),
-        help_text = "Used to generate URL."
+        help_text = "Used to generate URL.",
+        unique = True
     )
     tag = models.CharField(_("Tag"),
         max_length= 100,

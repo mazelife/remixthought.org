@@ -2,6 +2,7 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns('apps.statements.views', 
     url(r'^$', 'index', name="index"),
+    url(r'^add/$', 'add_statement', name="add"),
     # API Calls:
     url(r'api/statements/(?P<count>[\d]+)/?$', 'api_statements'),
     url(r'api/statements/count/$', 'api_statements_count'),

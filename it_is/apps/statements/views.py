@@ -1,15 +1,33 @@
 from django.core import serializers
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseBadRequest, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.views.generic import simple
 
+from forms import StatementForm
 from models import Statement, Tag
 from utils import get_param, get_numeric_param, tag_search
 
 def index(request):
     return simple.direct_to_template(request,
         template = "index.html"    
+    )
+
+def add_statement(request):
+    if request.method == 'POST':
+        form = StatementForm(request.POST)
+        if form.is_valid():
+            #statement = form.save()
+            return simple.redirect_to(request,
+                url=reverse("statements:index"), 
+                permanent=False
+            )
+    else:
+        form = StatementForm()
+    return simple.direct_to_template(request,
+        extra_context = {'form': form},
+        template = 'add_statement.html'
     )
 
 def api_statements(request, count=None):

@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 from django.db.models import Count
+from django.template.defaultfilters import slugify
 
 
 class StatementManager(models.Manager):
@@ -36,3 +37,13 @@ class TagManager(models.Manager):
         qs = self.get_query_set().annotate(
             times_used=Count('statement')).order_by('times_used').reverse()
         return qs[:count]
+    
+    def get_or_create_from_tag(self, tag):
+        """
+        Tries to see if a tag matching ``tag`` exists, creates it if it does 
+        not. Returns the match or newly-created tag. This works a bit 
+        differently from the standard ``get_or_create`` method in that it will
+        generate the slug automatically from the given tag.
+        """
+        slug = slugify(tag)        
+        return self.get_or_create(slug=slug, tag=tag)
