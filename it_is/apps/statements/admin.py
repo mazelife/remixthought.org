@@ -11,7 +11,7 @@ class StatementAdmin(admin.ModelAdmin):
 
 class TagAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_created'
-    list_display = ('__unicode__', 'date_created')
+    list_display = ('tag_name', 'date_created')
     
      
 admin.site.register(Statement, StatementAdmin)

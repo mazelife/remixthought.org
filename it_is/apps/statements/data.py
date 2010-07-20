@@ -6,6 +6,7 @@ from nltk.corpus import words, gutenberg
 from django.db import IntegrityError, transaction
 from django.template.defaultfilters import slugify
 
+from color import ColorPicker
 import extract
 from models import Statement, Tag
 
@@ -31,6 +32,8 @@ def create_random_tags(count=100):
     """
     all_words = words.words('en')
     selected_words = []
+    picker = ColorPicker(reset=True)
+    colors = picker.get_colors()
     while count > 0:
         word = random.choice(all_words)
         selected_words.insert(0, word)
@@ -38,9 +41,11 @@ def create_random_tags(count=100):
         count += -1
     del all_words
     for word in selected_words:
-        tag = Tag(slug=slugify(word), tag=word)
+        color = colors.next()
+        tag = Tag(slug=slugify(word), tag=word, color=color)
         tag.save()
 
+@transaction.commit_manually
 def create_random_statements(count=50):
     """
     This function scans the ``nltk`` Project Gutenberg dataset, extracts random

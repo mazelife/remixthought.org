@@ -8,3 +8,5 @@
 *.pyc
 # ignore local settings
 local_settings.py
+# ignore data files
+*.data

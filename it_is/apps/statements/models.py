@@ -1,9 +1,11 @@
 import re
 
 from django.db import models
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from managers import StatementManager, TagManager
+from color import ColorField
 
 _STATEMENT_STATUS = (
     ('p', 'published'),
@@ -60,6 +62,7 @@ class Statement(models.Model):
         return self.status == 'p'
     published.boolean = True
 
+
 class Tag(models.Model):
     slug = models.SlugField(_("Slug"),
         help_text = "Used to generate URL.",
@@ -69,6 +72,7 @@ class Tag(models.Model):
         max_length= 100,
         unique = True
     )
+    color = ColorField(blank=True)
     date_created = models.DateTimeField(_("Date created"),
         auto_now_add = True
     )
@@ -80,3 +84,13 @@ class Tag(models.Model):
     
     def __unicode__(self):
         return self.tag
+    
+    def tag_name(self):
+        html = (
+            '<div style="background-color: #%s; width: 12px; '
+            'height: 12px; float: left;"></div>'
+        ) % self.color
+        html += '&nbsp;' + self.__unicode__()
+        return html
+        
+    tag_name.allow_tags = True
