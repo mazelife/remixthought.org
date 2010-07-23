@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.views.generic import simple
 
-from forms import StatementForm
+from forms import StatementFormWithCaptcha
 from models import Statement, Tag
 from utils import get_param, get_numeric_param, tag_search
 
@@ -16,7 +16,7 @@ def index(request):
 
 def add_statement(request):
     if request.method == 'POST':
-        form = StatementForm(request.POST)
+        form = StatementFormWithCaptcha(request.POST)
         if form.is_valid():
             #statement = form.save()
             return simple.redirect_to(request,
@@ -24,10 +24,10 @@ def add_statement(request):
                 permanent=False
             )
     else:
-        form = StatementForm()
+        form = StatementFormWithCaptcha()
     return simple.direct_to_template(request,
         extra_context = {'form': form},
-        template = 'add_statement.html'
+        template = 'statements/add_statement.html'
     )
 
 def api_statements(request, count=None):

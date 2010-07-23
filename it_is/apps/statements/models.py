@@ -76,7 +76,6 @@ class Tag(models.Model):
     date_created = models.DateTimeField(_("Date created"),
         auto_now_add = True
     )
-    
     objects = TagManager()
     
     class Meta:

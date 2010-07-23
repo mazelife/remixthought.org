@@ -23,7 +23,6 @@ var ColorPickerAdmin = {
             hex_code = "#" + hex;
             hex = parseInt(hex, 16);
             brightness = Math.max(hex >> 16, (hex & 0x00FF00) >> 8, (hex & 0x0000FF)) * 100/255;
-            console.log(brightness);
             if (brightness < 60) {
                 field.css('color', '#ffffff');
             }

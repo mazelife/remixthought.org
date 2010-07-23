@@ -4,19 +4,11 @@ from django.db import models
 from django.db.models import Count
 from django.template.defaultfilters import slugify
 
+from color import color_picker
 
 class StatementManager(models.Manager):
-    """
-    This manager can be used for blog and tumblelog entries becuase the 
-    conditions for an entry being published in either are the same.
-    """
+
     def published(self):
-        """
-        A tumblelog entry is published if its status is in the 
-        PUBLISHED_ENTRY_STATES list in BloggingSettings (which can be overriden
-        in the main settings file by setting BLOGGING_PUBLISHED_ENTRY_STATES) 
-        the pub_date attribute is not in the future.
-        """
         return self.get_query_set().filter(
                 status='p'
             ).exclude(
@@ -45,5 +37,9 @@ class TagManager(models.Manager):
         differently from the standard ``get_or_create`` method in that it will
         generate the slug automatically from the given tag.
         """
-        slug = slugify(tag)        
-        return self.get_or_create(slug=slug, tag=tag)
+        slug = slugify(tag)
+        obj, created = self.get_or_create(slug=slug, tag=tag)
+        if created:
+            obj.color = color_picker.get_color()
+            obj.save()
+        return obj, created

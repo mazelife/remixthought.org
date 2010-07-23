@@ -12,6 +12,7 @@ from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.db import models
 
+# Provide a ``product`` function for pre-2.6 users.
 try:
     from itertools import product
 except ImportError:
@@ -25,11 +26,29 @@ except ImportError:
         for prod in result:
             yield tuple(prod)
 
+import app_settings
+
+"""
+
+This module handles the creation and assignment of tag colors and defines a 
+Django widget and field for a GUI javascript-based colorpicker.
+
+"""
+
 class ColorPicker(object):
+    """
+    A class which provides an object that manages the creation and assignment 
+    of new colors for tags. On init, the color picker will create a list of
+    450,000 colors. These will be stored in a python pickle file (the location
+    of this can be set in your settings file:   
+    ``STATEMENTS_COLOR_DATA_FILE_PATH``). Requests for new tags will draw down 
+    from this pool. Should the initial set be exhausted, new random colors will 
+    begin to be generated. 
+    """
     
     available_colors = None
     
-    pickle_file = 'colors.data'
+    pickle_file = path.join(app_settings.COLOR_DATA_FILE_PATH, 'colors.data')
     
     def __init__(self, reset=False):
         if not reset and path.exists(self.pickle_file):
@@ -37,14 +56,14 @@ class ColorPicker(object):
             self.available_colors = pickle.loads(fh.read())
             fh.close()
         else:
-            colors = self.create_colors()
+            colors = self._create_colors()
             fh = open(self.pickle_file, 'w')
             fh.write(pickle.dumps(colors))
             fh.close()
             self.available_colors = colors
             
     
-    def create_colors(self):
+    def _create_colors(self):
         available_colors = []
         hues = xrange(0, 360, 2)
         saturations = xrange(80, 100, 2)
@@ -58,18 +77,34 @@ class ColorPicker(object):
             available_colors.insert(0, hex_code)
         return available_colors
     
-    def save_colors(self):
+    def _save_colors(self):
         fh = open(self.pickle_file, 'w')
         fh.write(pickle.dumps(self.available_colors))
         fh.close()
         
-    def get_colors(self):
+    def _get_colors(self):
         while len(self.available_colors) > 0:
             index = random.randrange(0, (len(self.available_colors)))
             color = self.available_colors[index]
             del self.available_colors[index]
-            self.save_colors()
+            self._save_colors()
             yield color
+    
+    def get_color(self):
+        """
+        Get one color at a time. Once the intial set of 450,000 is 
+        exhausted, start returning random colors (still within the 
+        colorspace).
+        """
+        if not hasattr(self, 'colorset'):
+            self.colorset = self._get_colors()
+        if not self.colorset:
+            return self.get_random_color()
+        try:
+            return self.colorset.next()
+        except StopIteration:
+            self.colorset = False
+            return self.get_random_color()
 
     def get_random_color(self):
         h = round(random.randint(0, 360)/360.0, 2)
@@ -77,6 +112,8 @@ class ColorPicker(object):
         v = round(random.randint(75, 93)/100.0, 2)
         rgb = colorsys.hsv_to_rgb(h,s,v)
         return "%02X%02X%02X" % tuple([int(i * 255) for i in rgb])
+
+color_picker = ColorPicker()
 
 class ColorPickerWidget(forms.TextInput):
     class Media:
@@ -105,6 +142,7 @@ class ColorPickerWidget(forms.TextInput):
             </script>''' % (name, name))
 
 class ColorField(models.CharField):
+    """Field for a GUI HTML/Javascript-based color picker."""
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 10
         super(ColorField, self).__init__(*args, **kwargs)
