@@ -53,7 +53,33 @@ def api_statements(request, count=None):
         statements_new_keys.append(dict(
             id=statement.id, 
             statement=statement.text,
-            tag=[statement.tag.slug, statement.tag.tag]
+            tag=[statement.tag.slug, statement.tag.tag, statement.tag.color]
+        ))
+    statements = simplejson.dumps(statements_new_keys, ensure_ascii=False)
+    return HttpResponse(statements, mimetype="application/json")
+
+def api_statements_all(request):
+    statements = Statement.objects.published().only('id', 'text', 'tag')
+    if len(statements) == 0:
+        raise Http404, "Offset is too large."
+    statements_new_keys = []
+    for statement in statements:
+        statements_new_keys.append(dict(
+            id=statement.id, 
+            statement=statement.text,
+            tag=[statement.tag.slug, statement.tag.tag, statement.tag.color]
+        ))
+    statements = simplejson.dumps(statements_new_keys, ensure_ascii=False)
+    return HttpResponse(statements, mimetype="application/json")
+
+def api_statements_search(request, tag=None):
+    statements = Statement.objects.published().only('id', 'text', 'tag')
+    statements_new_keys = []
+    for statement in statements.filter(tag__slug=tag):
+        statements_new_keys.append(dict(
+            id=statement.id, 
+            statement=statement.text,
+            tag=[statement.tag.slug, statement.tag.tag, statement.tag.color]
         ))
     statements = simplejson.dumps(statements_new_keys, ensure_ascii=False)
     return HttpResponse(statements, mimetype="application/json")
