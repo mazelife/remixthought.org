@@ -12,21 +12,25 @@
          font-weight:bold;
          height:16px;
          line-height:16px;
-         padding:0;
+         padding:0 14px;
          position:absolute;
          right:140px;
          text-align:center;
          top:71px;
-         width:128px;
          z-index:100;
      }
      a#import-link:hover {
          background: #5B80B2;
      }
+     a#import-link.url {
+         background: #3445ff;
+         right: 322px;
+     }
   </style>
 {% endblock %}
 
 {% block content %}
-  <a id="import-link" href="{%url admin:statements_statement_import%}">Import Statements</a>
+  <a id="import-link" class="url" title="Import statements from a URL." href="{%url admin:statements_statement_import_url%}">Import Statements from URL</a>
+  <a id="import-link" title="Import statements from a comma separated value spreadsheet." href="{%url admin:statements_statement_import_csv%}">Import Statements from CSV</a>
   {{block.super}}
 {% endblock %}
