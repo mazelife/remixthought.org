@@ -1,6 +1,6 @@
-django
-django-debug-toolbar
-django-coverage
+django==1.2.1
+django-debug-toolbar==0.8.3
+django-coverage==1.0.3
 PyYAML==3.09
 nltk==2.0b8
 recaptcha-client==1.0.3
