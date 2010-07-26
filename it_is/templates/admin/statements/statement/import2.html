@@ -1,0 +1,43 @@
+{% extends "admin/base_site.html" %}
+{% load adminmedia %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/forms.css" />
+    <script type="text/javascript" src="{{MEDIA_URL}}scripts/jquery.min.js"></script>
+    <style type="text/css">
+        input.text { width: 250px;}
+        input.wide { width: 450px; }
+    </style>
+{% endblock %}
+
+{% block breadcrumbs %}{% if not is_popup %}
+<div class="breadcrumbs">
+     <a href="../../../">Home</a> &rsaquo;
+     <a href="../../">Statement</a> &rsaquo;
+     <a href="../">Statements</a> &rsaquo; 
+     {{title}}
+</div>
+{% endif %}{% endblock %}
+{% block content %}
+<div id="content-main">
+{%ifequal type 'url'%}
+    <!--Import from URL-->
+    <p><strong>Instructions:</strong> Add a URL and all "it is" statements will be extracted from the document. For best results, provide links to text-only files. Use the default tag field to automatically tag all statements found in the URL (these can be retagged on an individual basis later).</p>
+{%else%}
+    <!--Import from CSV-->
+    <p><strong>Instructions:</strong> Upload a <a href="http://en.wikipedia.org/wiki/Comma-separated_values">CSV file</a> containing statements in the first column and the tag to use in the second column. Any spreadsheet program should have the capability to export a CSV file.</p>
+{%endifequal%}
+    <form action="" method="post" enctype="multipart/form-data">{%csrf_token%}
+        <input type="hidden" name="type" value="{{type}}">    
+        {{form.as_p}}
+        <div class="submit-row" {% if is_popup %}style="overflow: auto;"{% endif %}>
+            <input type="submit" value="Import" class="default" name="_save"/>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    $("input[type='text']").addClass('text');
+    $("input[name='url']").addClass('wide');
+</script>
+{% endblock %}
