@@ -16,12 +16,13 @@
 {% block breadcrumbs %}{% if not is_popup %}
 <div class="breadcrumbs">
      <a href="../../../">Home</a> &rsaquo;
-     <a href="../../">Statements</a> &rsaquo; 
+     <a href="../../">Statement</a> &rsaquo;
+     <a href="../">Statements</a> &rsaquo; 
      {{title}}
 </div>
 {% endif %}{% endblock %}
 {% block content %}
-<form action="{%url admin:statements_statement_import%}" method="post">{%csrf_token%}
+<form action="{%url admin:statements_statement_process%}" method="post">{%csrf_token%}
     <input type="hidden" name="count" value="{{records|length}}">
 <table>
     <thead>
