@@ -28,19 +28,29 @@ class StatementFormWithCaptcha(StatementForm):
     captcha = ReCaptchaField()
 
 
-class ImportForm(forms.Form):
-        csv = forms.FileField(label=_("CSV File"))
-        dialect = forms.ChoiceField(label=_("Export Type"), choices=(
-            ('excel', 'MS Excel CSV Export'),
-            ('plain', 'Pure CSV')        
-        ))
-        
-        def clean_csv(self):
-            """Ensure the CSV is not too large."""
-            csv_fileobj = self.cleaned_data['csv']
-            size = int(math.ceil(csv_fileobj.size/1024.0))
-            if size > 200:
-                raise forms.ValidationError((
-                    "File must be less than 200k. This file is %d kilobytes."
-                ) % size)
-            return csv_fileobj
+class URLImportForm(forms.Form):
+    url = forms.URLField(
+        help_text =_("Works best with a plain-text URL."),
+        label=_("URL"))
+    default_tag = forms.CharField(
+        label=_("Default tag"), 
+        max_length=200, 
+        required="False"
+    )
+    
+class CSVImportForm(forms.Form):
+    csv = forms.FileField(label=_("CSV File"))
+    dialect = forms.ChoiceField(label=_("Export Type"), choices=(
+        ('excel', 'MS Excel CSV Export'),
+        ('plain', 'Pure CSV')        
+    ))
+
+    def clean_csv(self):
+        """Ensure the CSV is not too large."""
+        csv_fileobj = self.cleaned_data['csv']
+        size = int(math.ceil(csv_fileobj.size/1024.0))
+        if size > 200:
+            raise forms.ValidationError((
+                "File must be less than 200k. This file is %d kilobytes."
+            ) % size)
+        return csv_fileobj

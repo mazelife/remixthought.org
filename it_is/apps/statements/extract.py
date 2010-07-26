@@ -10,7 +10,10 @@ import nltk
 #       Extract statemnts from a CSV file
 #---------------------------------------------------------
 
-def _normlize_file(file_obj):
+_double_line_breaks = re.compile("\n{2,}")
+_duble_spaces = re.compile("[ ]{2,}")
+
+def _normalize_file(file_obj):
     """
     Not surprisingly, this is necessary mostly for Excel-produced CSV 
     files. It tries to normalize Win and Mac line endings to UNIX-style
@@ -43,18 +46,50 @@ def _fix_encoding(*args):
             strings.append(arg)
     return (strings, problems_encountered,)
     
+def from_url(url, default_tag):
+    """
+    Extract "It is..." sentences from a URL. Returns a list of tuples of the
+    form:
+        
+        (sentence, tag, encoding problems)
+        
+    ...where ``encoding problems`` is a boolean indicating that there were 
+    characters that could not be decoded as UTF-8.
+    """
+    page_contents =  _normalize_file(urlopen(url)).read()
+    page_contents = page_contents
+    exists, not_exists = from_text(page_contents)
+    records = []
+    for sentence in exists:
+        statement, problems = _fix_encoding(sentence)
+        statement = statement[0]
+        # remove linebreaks, double spaces:
+        statement  = _double_line_breaks.sub("", statement)
+        statement = _duble_spaces.sub(" ", statement)
+        records.append((statement, default_tag, problems))
+    return records
+    
 def from_csv(file_obj, is_excel=False):
-    file_obj = _normlize_file(file_obj)
+    """
+    Extract "It is..." sentences from a CSV. Returns a list of tuples of the
+    form:
+        
+        (sentence, tag, encoding problems)
+        
+    ...where ``encoding problems`` is a boolean indicating that there were 
+    characters that could not be decoded as UTF-8.
+    """    
+    file_obj = _normalize_file(file_obj)
     kwargs = is_excel and {'dialect': 'excel'} or {}
     reader = csv.reader(file_obj, **kwargs)
-    results = []
+    records = []
     for line in reader:
         statement, tag = line[0:2]
         if len(line) >= 2:
             (statement, tag,), problems = _fix_encoding(statement, tag)
             if not statement == '' and not tag == '':
-                results.append((statement, tag, problems))
-    return results
+                records.append((statement, tag, problems))
+    return records
 
 #---------------------------------------------------------
 #       Extract "It Is" statemnts from a body of text.
