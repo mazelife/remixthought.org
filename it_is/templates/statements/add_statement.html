@@ -1,21 +1,4 @@
-{%extends "base.html"%}
-{%block title%}
-Add a statement.
-{%endblock%}
-{%block content%}
 <form action="" method="post">{%csrf_token%}
 {{form.as_p}}
 <button type="submit">Add</button>
 </form>
-{%endblock%}
-{%block scripts%}
-<script>var MEDIA_URL = "{{MEDIA_URL}}";</script>
-<script src="{{MEDIA_URL}}scripts/prototype-mini.js" type="text/javascript"></script>
-<script src="{{MEDIA_URL}}scripts/js-interpolate-0.1.js" type="text/javascript"></script>
-<script src="{{MEDIA_URL}}scripts/jquery-1.4.2.js" type="text/javascript"></script>
-<script src="{{MEDIA_URL}}scripts/jquery.featuresupport-0.1.js" type="text/javascript"></script>
-<script src="{{MEDIA_URL}}scripts/jquery.cookie.js" type="text/javascript"></script>
-<script src="{{MEDIA_URL}}scripts/jquery.event.drag.js" type="text/javascript"></script>
-<script src="{{MEDIA_URL}}scripts/jquery.event.drop.js" type="text/javascript"></script>
-<!--script src="{{MEDIA_URL}}scripts/itis.js" type="text/javascript"></script-->
-{%endblock%}

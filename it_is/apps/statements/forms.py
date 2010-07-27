@@ -85,7 +85,7 @@ class StatementSuggestionForm(forms.Form):
         url = self.cleaned_data['url']
         other_source = self.cleaned_data['other_source']
         if not url and not other_source:
-            raise ValidationError, \
+            raise forms.ValidationError, \
                 "Either URL of source or Other source field must be filled."
         return self.cleaned_data
     
