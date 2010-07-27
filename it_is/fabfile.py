@@ -53,7 +53,7 @@ def deploy():
         archive_name = run((
             "find . -name 'mazelife*.tar.gz' | sed  's/\.tar\.gz//g'"
         ))
-        run("find . -name 'mazelife*.tar.gz' -exec tar -xvzf {} \;")
+        run("find . -name 'mazelife*.tar.gz' -exec tar -xzf {} \;")
         run("find . -name 'mazelife*.tar.gz' -exec rm {} \;")
         run("mv %s %s" % (archive_name, env.github_checkout_name))
         # Copy local settings into new project version.
