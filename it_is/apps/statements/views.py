@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.views.generic import simple
 
-from forms import StatementFormWithCaptcha
+from forms import StatementFormWithCaptcha, StatementSuggestionForm
 from models import Statement, Tag
 from utils import get_param, get_numeric_param, tag_search
 
@@ -29,6 +29,22 @@ def add_statement(request):
         extra_context = {'form': form},
         template = 'statements/add_statement.html'
     )
+
+def suggest_statement(request):
+    if request.method == 'POST':
+        form = StatementSuggestionForm(request.POST)
+        if form.is_valid():
+            statement = form.send()
+            return simple.redirect_to(request,
+                url=reverse("statements:index"), 
+                permanent=False
+            )
+    else:
+        form = StatementSuggestionForm()
+    return simple.direct_to_template(request,
+        extra_context = {'form': form},
+        template = 'statements/suggest_statement.html'
+    )    
 
 def api_statements(request, count=None):
     """A view of a JSON-serialized, reverse-chronologically-ordered set of  

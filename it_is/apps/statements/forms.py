@@ -1,5 +1,7 @@
 import math 
 
+from django.core.exceptions import ImproperlyConfigured
+from django.core.mail import send_mail
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -54,3 +56,56 @@ class CSVImportForm(forms.Form):
                 "File must be less than 200k. This file is %d kilobytes."
             ) % size)
         return csv_fileobj
+
+class StatementSuggestionForm(forms.Form):
+    """Allows a user to suggest a statement source."""
+    url = forms.URLField(
+        label =_("URL of source"),
+        required=False
+    )
+    other_source = forms.CharField(
+        label=_("Other source"),
+        max_length=200,
+        widget= forms.Textarea,
+        required=False        
+    )
+    comments = forms.CharField(
+        label=_("Comments about your source (optional)"),
+        max_length=200,
+        widget= forms.Textarea,
+        required=False    
+    )
+    email = forms.EmailField(
+        label=_("Your email (optional)"),
+        required=False        
+    )
+    captcha = ReCaptchaField()
+    
+    def clean(self):
+        url = self.cleaned_data['url']
+        other_source = self.cleaned_data['other_source']
+        if not url and not other_source:
+            raise ValidationError, \
+                "Either URL of source or Other source field must be filled."
+        return self.cleaned_data
+    
+    def send(self):
+        """
+        Emails form data to addresses in SOURCE_SUGGESTION_EMAIL_LIST setting.
+        """
+        from django.conf import settings
+        if hasattr(settings, 'SOURCE_SUGGESTION_EMAIL_LIST'):
+            to = settings.SOURCE_SUGGESTION_EMAIL_LIST
+        else:
+            raise ImproperlyConfigured, \
+                "SOURCE_SUGGESTION_EMAIL_LIST setting is not present."
+        message = (
+            "URL: %(url)s \n Other source: %(other_source)s \n"
+            "Comments: %(comments)s \n Email: %(email)s"
+        )
+        send_mail(
+            subject = "It Is Source Suggestion",
+            message = message,
+            from_email = source_suggest@remixthought.org,
+            recipient_list = to
+        )
