@@ -15,9 +15,12 @@ class StatementManager(models.Manager):
                 date_created__gt=datetime.datetime.now()
             )
     
-    def get_random_set(self, count):
+    def get_random_set(self, count=None):
         """ Get a random set of statements the length of ``count``."""
-        return self.published().order_by("?")[:count]
+        if count:
+            return self.published().order_by("?")[:count]
+        else:
+            return self.published().order_by("?")
 
 class TagManager(models.Manager):
 

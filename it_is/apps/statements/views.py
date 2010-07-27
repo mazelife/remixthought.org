@@ -75,7 +75,7 @@ def api_statements(request, count=None):
     return HttpResponse(statements, mimetype="application/json")
 
 def api_statements_all(request):
-    statements = Statement.objects.published().only('id', 'text', 'tag')
+    statements = Statement.objects.get_random_set().only('id', 'text', 'tag')
     if len(statements) == 0:
         raise Http404, "Offset is too large."
     statements_new_keys = []
