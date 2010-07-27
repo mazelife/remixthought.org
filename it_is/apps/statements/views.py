@@ -15,6 +15,7 @@ def index(request):
     )
 
 def add_statement(request):
+    """A view that allows users add a statement."""    
     if request.method == 'POST':
         form = StatementFormWithCaptcha(request.POST)
         if form.is_valid():
@@ -31,6 +32,7 @@ def add_statement(request):
     )
 
 def suggest_statement(request):
+    """A view that allows users to suggest a statement source."""
     if request.method == 'POST':
         form = StatementSuggestionForm(request.POST)
         if form.is_valid():
@@ -75,6 +77,7 @@ def api_statements(request, count=None):
     return HttpResponse(statements, mimetype="application/json")
 
 def api_statements_all(request):
+    """A view of all statements, randomized."""
     statements = Statement.objects.get_random_set().only('id', 'text', 'tag')
     if len(statements) == 0:
         raise Http404, "Offset is too large."
