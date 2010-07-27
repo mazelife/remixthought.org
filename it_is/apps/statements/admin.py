@@ -57,7 +57,7 @@ class StatementAdmin(admin.ModelAdmin):
         else:
             form = URLImportForm()
         return simple.direct_to_template(request,
-            template = 'admin/statements/statement/import2.html',
+            template = 'admin/statements/statement/import.html',
             extra_context = {
                 'title': 'Import Statements',
                 'form': form,
@@ -87,7 +87,7 @@ class StatementAdmin(admin.ModelAdmin):
         else:
             form = CSVImportForm()
         return simple.direct_to_template(request,
-            template = 'admin/statements/statement/import2.html',
+            template = 'admin/statements/statement/import.html',
             extra_context = {
                 'title': 'Import Statements',
                 'form': form,
