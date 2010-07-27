@@ -74,7 +74,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'recaptcha_django.middleware.ReCaptchaMiddleware'
+    'recaptcha_django.middleware.ReCaptchaMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware'
 )
 
 ROOT_URLCONF = 'it_is.urls'
@@ -90,6 +91,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.admin',
+    'django.contrib.flatpages',
     'apps.statements'
 )
 
