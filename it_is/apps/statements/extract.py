@@ -99,8 +99,8 @@ def from_csv(file_obj, is_excel=False):
 sentence_detector = nltk.data.load('nltk:tokenizers/punkt/english.pickle')
 
 AFFIRMATIVES = (
-    re.compile("it is(?!n't)(?! not)[ ]+"), 
-    re.compile("it's (?!not)"),
+    re.compile(".*it is(?!n't)(?! not)[ ]+"), 
+    re.compile(".*it's (?!not)"),
 )
 NEGATIVES = ("it is not", "it isn't", "it's not")
 
@@ -132,11 +132,15 @@ def matcher(phrases, sentence):
     False
     >>> matcher(AFFIRMATIVES, "It isn't time.")
     False
+    >>> matcher(AFFIRMATIVES, "Everyone agrees that it is a loop.")
+    True
     >>> matcher(AFFIRMATIVES, "It isolates things.")
     False
     >>> matcher(NEGATIVES, "It's not bad.")
     True
     >>> matcher(NEGATIVES, "It isn't fair.")
+    True
+    >>> matcher(NEGATIVES, "Everyone agrees that it isn't a loop.")
     True
     >>> matcher(NEGATIVES, "It is not what you know.")
     True
