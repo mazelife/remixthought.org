@@ -9,6 +9,7 @@
         .statement input.show, .tag input.show, .statement a.show, .tag a.show {display: inline;}
         .statement input.show, .tag input.show {width: 95%; }
         .statement a.show, .tag a.show  { padding-left: 10px;}
+        thead th a:link, thead th a:visited { color: #5B80B2;}
     </style>
     <script type="text/javascript" src="{{MEDIA_URL}}scripts/jquery.min.js"></script>
 {% endblock %}
@@ -26,11 +27,12 @@
     <input type="hidden" name="count" value="{{records|length}}">
 <table>
     <thead>
-        <tr><th colspan="2">Statement</th><th>Tag</th><th>Decoding Error</th></tr>
+        <tr>{%ifequal type 'url'%}<th><a href="#" title="click to toggle all">Include</a></th>{%endifequal%}<th colspan="2">Statement</th><th>Tag</th><th>Decoding Error</th></tr>
     </thead>
     <tbody>
         {%for statement, tag, decoding_problem in records%}
         <tr>
+            {%ifequal type 'url'%}<td><input type="checkbox" name="p{{forloop.counter}}" value="1" checked="true"></td>{%endifequal%}
             <td>#{{forloop.counter}}</td>
             <td class="statement"><span>{{statement}}</span><input type="text" name="s{{forloop.counter}}" value="{{statement}}"><a href="#">[ok]</a></td>
             <td class="tag"><span>{{tag}}</span><input type="text" name="t{{forloop.counter}}" value="{{tag}}"><a href="#">[ok]</a></td>
@@ -46,6 +48,7 @@
 </div>
 </form>
 <script type="text/javascript">
+    var all_checked = true;
     var editables = $("td.statement, td.tag");
     editables.each(function() {
         var row = $(this);
@@ -58,6 +61,17 @@
             row.find("input, a").addClass("show");
             $(this).hide();
         })
+    });
+    
+    $("th a").click(function(evt){
+        evt.preventDefault();
+        if (all_checked) {
+            $("input[type='checkbox']").attr('checked', '');
+            all_checked = false;
+        } else {
+            $("input[type='checkbox']").attr('checked', 'true');
+            all_checked = true;
+        }
     });
 </script>
 {%endblock%}

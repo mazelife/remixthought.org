@@ -106,21 +106,22 @@ class StatementAdmin(admin.ModelAdmin):
             else:
                 return HttpResponseBadRequest("Count is not a number.")
             for i in range(1, (count + 1)):
-                data = {
-                    'text': request.POST.get("s%d" % i),
-                    'tag': request.POST.get("t%d" % i)
-                }
-                form = StatementForm(data)
-                if form.is_valid():
-                    form.save()
-                else:
-                    err_string = ""
-                    for field, errs in form.errors.items():
-                        errs = ", ".join(errs)
-                        err_string += "%s: %s ," % (field, errs)
-                    return HttpResponseBadRequest(
-                        "Validation error: %s" % err_string
-                    )
+                if request.POST.get("p%d" % i, None):
+                    data = {
+                        'text': request.POST.get("s%d" % i),
+                        'tag': request.POST.get("t%d" % i)
+                    }
+                    form = StatementForm(data)
+                    if form.is_valid():
+                        form.save()
+                    else:
+                        err_string = ""
+                        for field, errs in form.errors.items():
+                            errs = ", ".join(errs)
+                            err_string += "%s: %s ," % (field, errs)
+                        return HttpResponseBadRequest(
+                            "Validation error: %s" % err_string
+                        )
             url = reverse('admin:statements_statement_changelist')
             return simple.redirect_to(request, url)                      
 

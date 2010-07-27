@@ -1,0 +1,28 @@
+{%extends 'base.html'%}
+{%block title%}Suggest a source.{%endblock%}
+{%block head%}
+    <style>
+        #pagebody { height: 100%; }
+        #collection { display: none;}
+        #content { 
+            background: #fff;
+            margin: 30px auto 10px auto;
+            padding: 50px;
+            width: 700px;
+        }
+        #content form, #content h1 { margin-bottom: 10px;}
+        #content form label { width: 200px; display: block; float: left;}
+        #content form p { margin-bottom: 10px;}
+    </style>
+{%endblock%}
+{%block content%}
+<div id="content">
+    <h1>Suggest a source.</h1>
+    <form action="" method="post">{%csrf_token%}
+    {{form.as_p}}
+    <button type="submit">Suggest a source</button>
+    </form>
+</div>
+{%endblock%}
+{%block scripts%}
+{%endblock%}

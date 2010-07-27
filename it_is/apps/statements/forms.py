@@ -106,6 +106,6 @@ class StatementSuggestionForm(forms.Form):
         send_mail(
             subject = "It Is Source Suggestion",
             message = message,
-            from_email = source_suggest@remixthought.org,
+            from_email = 'source_suggest@remixthought.org',
             recipient_list = to
         )
