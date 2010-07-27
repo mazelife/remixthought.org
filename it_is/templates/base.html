@@ -15,7 +15,7 @@
             <h1>What it is according to <strong>Everything</strong></h1>
             <nav>
                 <ul>
-                    <li id="add"><a href="">Add Statements</a></li>
+                    <li id="add"><a href="{%url statements:add%}">Add Statements</a></li>
                     <li><a href="">Download</a></li>
                     <li><a href="">About</a></li>
                     <li><a href="">Share This</a></li>
@@ -24,9 +24,8 @@
         </header>
         
         <div id="pagebody">
-            
+            {%block content%}{%endblock%}
         </div>
-        
         <section id="collection">
             <header>
                 <h1>My&nbsp;Collection</h1>
@@ -34,7 +33,7 @@
             </header>
             <div/>
         </section>
-        
+        {%block scripts%}
         <script>var MEDIA_URL = "{{MEDIA_URL}}";</script>
         <script src="{{MEDIA_URL}}scripts/prototype-mini.js" type="text/javascript"></script>
         <script src="{{MEDIA_URL}}scripts/js-interpolate-0.1.js" type="text/javascript"></script>
@@ -44,6 +43,6 @@
         <script src="{{MEDIA_URL}}scripts/jquery.event.drag.js" type="text/javascript"></script>
         <script src="{{MEDIA_URL}}scripts/jquery.event.drop.js" type="text/javascript"></script>
         <script src="{{MEDIA_URL}}scripts/itis.js" type="text/javascript"></script>
-        
+        {%endblock%}
     </body>
 </html>
