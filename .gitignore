@@ -10,3 +10,5 @@
 local_settings.py
 # ignore data files
 *.data
+# ignore csv files
+*.csv
