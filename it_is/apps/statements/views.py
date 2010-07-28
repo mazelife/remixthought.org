@@ -103,6 +103,18 @@ def api_statements_search(request, tag=None):
     statements = simplejson.dumps(statements_new_keys, ensure_ascii=False)
     return HttpResponse(statements, mimetype="application/json")
 
+def api_statements_commalist(request, pks=''):
+    statements = Statement.objects.published().only('id', 'text', 'tag')
+    statements_new_keys = []
+    for statement in statements.filter(pk__in=[int(i) for i in pks.split(',')]):
+        statements_new_keys.append(dict(
+            id=statement.id, 
+            statement=statement.text,
+            tag=[statement.tag.slug, statement.tag.tag, statement.tag.color]
+        ))
+    statements = simplejson.dumps(statements_new_keys, ensure_ascii=False)
+    return HttpResponse(statements, mimetype="application/json")
+
 def api_statements_count(request):
     statements = Statement.objects.published()
     tag = get_param(request, "tag")

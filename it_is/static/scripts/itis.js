@@ -10,6 +10,7 @@ var api_path = function(type, query){
         'all': '/api/statements/',
         'random': '/api/statements/' + encodeURI(query) + '/',
         'search': '/api/statements/search/' + encodeURI(query) + '/',
+        'list': '/api/statements/list/' + encodeURI(query) + '/',
         'tags': '/api/tags/',
         'popular_tags': '/api/tags/popular/',
         'by_tag': '/api/tags/search/' + encodeURI(query) + '/',
@@ -27,6 +28,7 @@ var hash = function(){
 
 var List = Class.create({
     perpage: 5,
+    
     initialize: function(){
         this.statements = []
         this.currentPage = 1;
@@ -61,7 +63,7 @@ var List = Class.create({
     },
     
     
-    // Render a single list
+    // Render a single page of the current list
     render: function(page){
         
         var list = $('<ul/>', {
@@ -107,6 +109,10 @@ var List = Class.create({
             
         }
         
+        if(this.isFirstPage()){ $('#prev:visible').fadeOut(250) }else{ $('#prev:not(:visible)').fadeIn(250) }
+        if(this.isLastPage()){ $('#next:visible').fadeOut(250) }else{ $('#next:not(:visible)').fadeIn(250) }
+        
+        
         return list;
         
     },
@@ -117,6 +123,9 @@ var List = Class.create({
     populate: function(query){
         this.statements = [];
         var self = this;
+        
+        loader.show();
+        
         $.ajax({
             'dataType': 'json',
             'url': (query) ? api_path('search', query) : api_path('all'),
@@ -125,13 +134,14 @@ var List = Class.create({
                     var statement = data[i];
                     self.add(new Statement(
                         statement['id'],
-                        statement['tag'][0],
-                        statement['statement'],
-                        statement['tag'][2]
+                        statement['tag'],
+                        statement['statement']
                     ));
+                    if(query && i==0) var tag_display = statement['tag'][1];
                 }
+                loader.hide();
                 self.render(1).appendTo('#pagebody');
-                $('body > header > h1 > strong').text((query) ? query : 'Everything');
+                $('body > header > h1 > strong').text((tag_display) ? tag_display : 'Everything');
                 draggable.refresh();
             }
         });
@@ -169,8 +179,10 @@ var List = Class.create({
                 $(this).remove();
             });
             
+            this.currentPage++;
+            
             // Bring in next list
-            var newList = this.render(this.currentPage+1).css({
+            var newList = this.render(this.currentPage).css({
                 opacity: 0,
                 left: 600
             }).appendTo('#pagebody').animate({
@@ -179,7 +191,6 @@ var List = Class.create({
             }, 200);
             
             draggable.init();
-            this.currentPage++;
             
         }
         
@@ -199,8 +210,10 @@ var List = Class.create({
                 $(this).remove();
             });
             
+            this.currentPage--;
+            
             // Bring in next list
-            var newList = this.render(this.currentPage-1).css({
+            var newList = this.render(this.currentPage).css({
                 opacity: 0,
                 left: -600
             }).appendTo('#pagebody').animate({
@@ -209,30 +222,60 @@ var List = Class.create({
             }, 200);
             
             draggable.init();
-            this.currentPage--;
             
         }
         
     }
+    
 });
 
 
 var Collection = Class.create(List, {
     initialize: function(){
-        this.statements = []
+        this.statements = [];
+        self = this;
+        var c = $.cookie('itis_collection');
+        if(c && c != ''){
+            $.ajax({
+                'dataType': 'json',
+                'url': api_path('list', c),
+                'success': function(data, textStatus, XMLHttpRequest){
+                    for(var i = 0; i < data.length; i++){
+                        var statement = data[i];
+                        self.add(new Statement(
+                            statement['id'],
+                            statement['tag'],
+                            statement['statement']
+                        ));
+                    }
+                }
+            });
+        }
     },
+    
+    
     add: function($super, obj){
         if(!this.get(obj.sid)){
             $super(obj);
-            this.updateCookie();
-            this.updateCount();
+            this.update();
         }
     },
+    
+    
     remove: function($super, obj){
         $super(obj);
+        this.update();
+    },
+    
+    
+    
+    update: function(){
         this.updateCookie();
         this.updateCount();
+        this.populate();
+        adjustWindowSize();
     },
+    
     updateCookie: function(){
         var cookieValue = '';
         for(var i=0; i < this.statements.length; i++){
@@ -241,21 +284,41 @@ var Collection = Class.create(List, {
         }
         $.cookie('itis_collection', cookieValue);
     },
+    
+    
     updateCount: function(){
         $('#collection header h2').text(this.statements.length)
+    },
+    
+    populate: function($super){
+        $('#collection > div').html(this.render());
+    },
+    
+    render: function($super){
+        var list = $('<ul/>', {
+            'class': 'collection-list'
+        });
+        
+        for(var i=0; i < this.statements.length; i++){
+            this.statements[i].render().appendTo(list);
+        }
+        
+        return list;
+        
     }
+    
 });
-var myStatements = new Collection;
 
 
 /**/
 var Statement = Class.create({
     sizes: ['small', 'medium', 'large'],
-    initialize: function(sid, tag, statement, color){
+    initialize: function(sid, tag, statement){
         this.sid = sid;
-        this.tag = tag;
+        this.tag_slug = tag[0];
+        this.tag = tag[1];
+        this.color = tag[2];
         this.statement = statement;
-        this.color = color;
     },
     
     links: {
@@ -280,16 +343,16 @@ var Statement = Class.create({
             id: 'statement-' + this.sid,
             draggable: 'true'
         });
-        item.find('.tag').data('tag', this.tag);
+        item.find('.tag').data('tag', this.tag_slug);
         return item.data('statement', this);
     },
     addToCollection: function(){
         collection.add(this);
-        $('#statement-' + this.sid).append(this.links.remove).find('.add-collection').remove();
+        $('#statement-' + this.sid).find('.add-collection, .remove-collection').remove().end().append(this.links.remove);
     },
     removeFromCollection: function(){
         collection.remove(this.sid);
-        $('#statement-' + this.sid).append(this.links.add).find('.remove-collection').remove();
+        $('#statement-' + this.sid).find('.add-collection, .remove-collection').remove().end().append(this.links.add);
     },
     
 });
@@ -298,12 +361,28 @@ var Statement = Class.create({
 var overlay = {
     overlay: $('<div/>', {
         id: 'overlay'
-    }),
-    'show': function(){
-        this.overlay.appendTo('body').fadeIn(150);
+    }).appendTo('body').hide(),
+    'show': function(showArrow){
+        this.overlay.fadeIn(150);
+        if(showArrow) this.overlay.addClass('arrow');
     },
     'hide': function(){
-        $('#overlay').fadeOut(150);
+        this.overlay.fadeOut(150, function(){
+            $(this).removeClass('arrow');
+        });
+    }
+};
+
+
+var loader = {
+    loader: $('<div/>', {
+        id: 'loader'
+    }).appendTo('body').hide(),
+    'show': function(){
+        this.loader.show();
+    },
+    'hide': function(){
+        this.loader.hide();
     }
 };
 
@@ -311,10 +390,11 @@ var overlay = {
 $(document).ready(function(){
     
     /*  */
-    var adjustWindowSize = function(){
+    adjustWindowSize = function(){
         var w = $(window),
             p = $('#pagebody');
         p.css('height', (w.height() - parseInt(p.css('top'))));
+        $('.collection-list').css('height', (w.height() - 225));
     }
     adjustWindowSize();
     $(window).scroll(adjustWindowSize).resize(adjustWindowSize);
@@ -338,10 +418,10 @@ $(document).ready(function(){
             
             $('.statement')
                 .bind('dragstart', function(evt){
-                    overlay.show();
+                    overlay.show(true);
                     $('#collection').addClass('dragging').animate({
-                            'height': 20
-                        }, 125);
+                            'height': '+=15'
+                        }, 175);
                     var dragProxy = $(this).clone().attr('id', null).addClass('dragging').appendTo('body');
                     return dragProxy;
                 })
@@ -355,8 +435,8 @@ $(document).ready(function(){
                 .bind('dragend', function(evt){
                     overlay.hide();
                     $('#collection').removeClass('dragging').stop().animate({
-                            'height': 10
-                        }, 125);
+                            'height': '-=15'
+                        }, 175);
                     $( evt.dragProxy ).fadeOut( "normal", function(){
                         $( this ).remove();
                     });
@@ -377,15 +457,13 @@ $(document).ready(function(){
     };
     
     
-    list = new List;
-    collection = new Collection;
-    
-    
     // Tag display
     $('.tag').live('click', function(evt){
         evt.preventDefault();
-        var tag = $(this).data('tag');
-        window.location.hash = tag;
+        if($(this).closest('.collection-list').length){
+            $('#collection > header > h1').click();
+        }
+        window.location.hash = $(this).data('tag');
         list = new List;
     });
     
@@ -399,7 +477,7 @@ $(document).ready(function(){
             evt.preventDefault();
             list.prevPage();
         }
-    }).appendTo('#pagebody');
+    }).appendTo('#pagebody').hide();
     $('<a/>', {
         'href': '#',
         'id': 'next',
@@ -408,7 +486,7 @@ $(document).ready(function(){
             evt.preventDefault();
             list.nextPage();
         }
-    }).appendTo('#pagebody');
+    }).appendTo('#pagebody').hide();
     
     
     // Add/remove from collection links on individual statements
@@ -428,7 +506,7 @@ $(document).ready(function(){
         evt.preventDefault();
         overlay.show();
         $(this).closest('#collection').animate({
-            'height': $(window).height() - 75
+            'height': $(window).height() - 93,
         }, 400);
     }, function(evt){
         evt.preventDefault();
@@ -437,5 +515,8 @@ $(document).ready(function(){
             'height': 10
         }, 275);
     });
+    
+    collection = new Collection;
+    list = new List;
     
 });

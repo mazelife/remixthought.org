@@ -9,9 +9,6 @@ del { text-decoration:line-through; }
 table { border-collapse:collapse;border-spacing:0; }
 input,select { vertical-align:middle; }
 
-[draggable=true] {
-	-khtml-user-drag: element;
-}
 
 body{
 	font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
@@ -115,13 +112,27 @@ body{
 	}
 
 #overlay{
-	background: rgba(52, 51, 48, 0.95) url(../images/bg/halo.png) no-repeat left bottom;
+	background: rgba(52, 51, 48, 0.95) no-repeat left bottom;
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
 	z-index: 7500;
+}
+	#overlay.arrow{
+		background-image: url(../images/bg/halo.png);
+	}
+
+#loader{
+	background: url(../images/loader.gif) no-repeat center;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 15000;
+	margin-top: 47px;
 }
 
 .statement-list{
@@ -243,6 +254,7 @@ body{
 	z-index: 8000;
 	background: #FFF;
 	height: 10px;
+	overflow: visible !important;
 }
 	#collection > header{
 		font-size: 15px;
@@ -250,7 +262,7 @@ body{
 		color: #5c5a5a;
 		position: relative;
 		width: 220px;
-		height: 34px;
+		height: 1px;
 	}
 		#collection > header h1{
 			font-weight: bold;
@@ -290,6 +302,49 @@ body{
 	#collection > div{
 		background: #FFF;
 	}
+	.collection-list{
+		width: 725px;
+		margin: 50px auto;
+		padding: 25px;
+		overflow: hidden;
+		overflow-y: auto;
+	}
+		.collection-list:after{
+			clear: both;
+			display: block;
+			content: ".";
+			height: 0;
+			visibility: hidden;
+		}
+		.collection-list .statement{
+			width: 300px;
+			position: relative;
+			top: 0;
+			left: 0;
+			margin-bottom: 50px;
+			padding: 15px 20px 10px;
+			cursor: default;
+		}
+			.collection-list .statement:nth-child(odd){
+				float: left;
+				clear: both;
+			}
+			.collection-list .statement:nth-child(even){
+				float: right;
+			}
+			.collection-list .statement .tag{
+				padding: 8px 30px 8px 10px;
+				font-size: 8px;
+				top: -12px;
+			}
+			.collection-list .statement h2{
+				font-size: 15px;
+				line-height: 20px;
+				margin-bottom: 5px;
+			}
+			.collection-list .statement .collection-link{
+				font-size: 11px;
+			}
 
 .dragging{
 	z-index: 8000;
