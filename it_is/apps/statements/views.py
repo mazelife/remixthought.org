@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseBadRequest, Http404
@@ -5,13 +6,18 @@ from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.views.generic import simple
 
+from app_settings import CSV_DATA_FILE_PATH
 from forms import StatementFormWithCaptcha, StatementSuggestionForm
 from models import Statement, Tag
 from utils import get_param, get_numeric_param, tag_search
 
 def index(request):
+    csv_download_url = CSV_DATA_FILE_PATH.replace(settings.MEDIA_ROOT, "")
+    if csv_download_url.startswith("/"):
+        csv_download_url = csv_download_url[1:]
     return simple.direct_to_template(request,
-        template = "index.html"    
+        template = "index.html",
+        extra_context = {'csv_download_url': csv_download_url}  
     )
 
 def add_statement(request):
