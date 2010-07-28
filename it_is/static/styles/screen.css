@@ -115,13 +115,27 @@ body{
 	}
 
 #overlay{
-	background: rgba(52, 51, 48, 0.95) url(../images/bg/halo.png) no-repeat left bottom;
+	background: rgba(52, 51, 48, 0.95) no-repeat left bottom;
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
 	z-index: 7500;
+}
+	#overlay.arrow{
+		background-image: url(../images/bg/halo.png);
+	}
+
+#loader{
+	background: url(../images/loader.gif) no-repeat center;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 15000;
+	margin-top: 47px;
 }
 
 .statement-list{
@@ -243,6 +257,7 @@ body{
 	z-index: 8000;
 	background: #FFF;
 	height: 10px;
+	overflow: visible !important;
 }
 	#collection > header{
 		font-size: 15px;

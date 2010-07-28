@@ -27,6 +27,7 @@ var hash = function(){
 
 var List = Class.create({
     perpage: 5,
+    
     initialize: function(){
         this.statements = []
         this.currentPage = 1;
@@ -61,7 +62,7 @@ var List = Class.create({
     },
     
     
-    // Render a single list
+    // Render a single page of the current list
     render: function(page){
         
         var list = $('<ul/>', {
@@ -107,6 +108,10 @@ var List = Class.create({
             
         }
         
+        if(this.isFirstPage()){ $('#prev:visible').fadeOut(250) }else{ $('#prev:not(:visible)').fadeIn(250) }
+        if(this.isLastPage()){ $('#next:visible').fadeOut(250) }else{ $('#next:not(:visible)').fadeIn(250) }
+        
+        
         return list;
         
     },
@@ -117,6 +122,9 @@ var List = Class.create({
     populate: function(query){
         this.statements = [];
         var self = this;
+        
+        loader.show();
+        
         $.ajax({
             'dataType': 'json',
             'url': (query) ? api_path('search', query) : api_path('all'),
@@ -130,6 +138,7 @@ var List = Class.create({
                         statement['tag'][2]
                     ));
                 }
+                loader.hide();
                 self.render(1).appendTo('#pagebody');
                 $('body > header > h1 > strong').text((query) ? query : 'Everything');
                 draggable.refresh();
@@ -169,8 +178,10 @@ var List = Class.create({
                 $(this).remove();
             });
             
+            this.currentPage++;
+            
             // Bring in next list
-            var newList = this.render(this.currentPage+1).css({
+            var newList = this.render(this.currentPage).css({
                 opacity: 0,
                 left: 600
             }).appendTo('#pagebody').animate({
@@ -179,7 +190,6 @@ var List = Class.create({
             }, 200);
             
             draggable.init();
-            this.currentPage++;
             
         }
         
@@ -199,8 +209,10 @@ var List = Class.create({
                 $(this).remove();
             });
             
+            this.currentPage--;
+            
             // Bring in next list
-            var newList = this.render(this.currentPage-1).css({
+            var newList = this.render(this.currentPage).css({
                 opacity: 0,
                 left: -600
             }).appendTo('#pagebody').animate({
@@ -209,11 +221,11 @@ var List = Class.create({
             }, 200);
             
             draggable.init();
-            this.currentPage--;
             
         }
         
     }
+    
 });
 
 
@@ -221,6 +233,8 @@ var Collection = Class.create(List, {
     initialize: function(){
         this.statements = []
     },
+    
+    
     add: function($super, obj){
         if(!this.get(obj.sid)){
             $super(obj);
@@ -228,11 +242,15 @@ var Collection = Class.create(List, {
             this.updateCount();
         }
     },
+    
+    
     remove: function($super, obj){
         $super(obj);
         this.updateCookie();
         this.updateCount();
     },
+    
+    
     updateCookie: function(){
         var cookieValue = '';
         for(var i=0; i < this.statements.length; i++){
@@ -241,11 +259,13 @@ var Collection = Class.create(List, {
         }
         $.cookie('itis_collection', cookieValue);
     },
+    
+    
     updateCount: function(){
         $('#collection header h2').text(this.statements.length)
     }
+
 });
-var myStatements = new Collection;
 
 
 /**/
@@ -285,11 +305,11 @@ var Statement = Class.create({
     },
     addToCollection: function(){
         collection.add(this);
-        $('#statement-' + this.sid).append(this.links.remove).find('.add-collection').remove();
+        $('#statement-' + this.sid).find('.add-collection, .remove-collection').remove().end().append(this.links.remove);
     },
     removeFromCollection: function(){
         collection.remove(this.sid);
-        $('#statement-' + this.sid).append(this.links.add).find('.remove-collection').remove();
+        $('#statement-' + this.sid).find('.add-collection, .remove-collection').remove().end().append(this.links.add);
     },
     
 });
@@ -298,12 +318,28 @@ var Statement = Class.create({
 var overlay = {
     overlay: $('<div/>', {
         id: 'overlay'
-    }),
-    'show': function(){
-        this.overlay.appendTo('body').fadeIn(150);
+    }).appendTo('body').hide(),
+    'show': function(showArrow){
+        this.overlay.fadeIn(150);
+        if(showArrow) this.overlay.addClass('arrow');
     },
     'hide': function(){
-        $('#overlay').fadeOut(150);
+        this.overlay.fadeOut(150, function(){
+            $(this).removeClass('arrow');
+        });
+    }
+};
+
+
+var loader = {
+    loader: $('<div/>', {
+        id: 'loader'
+    }).appendTo('body').hide(),
+    'show': function(){
+        this.loader.show();
+    },
+    'hide': function(){
+        this.loader.hide();
     }
 };
 
@@ -338,10 +374,10 @@ $(document).ready(function(){
             
             $('.statement')
                 .bind('dragstart', function(evt){
-                    overlay.show();
+                    overlay.show(true);
                     $('#collection').addClass('dragging').animate({
-                            'height': 20
-                        }, 125);
+                            'height': '+=15'
+                        }, 175);
                     var dragProxy = $(this).clone().attr('id', null).addClass('dragging').appendTo('body');
                     return dragProxy;
                 })
@@ -355,8 +391,8 @@ $(document).ready(function(){
                 .bind('dragend', function(evt){
                     overlay.hide();
                     $('#collection').removeClass('dragging').stop().animate({
-                            'height': 10
-                        }, 125);
+                            'height': '-=15'
+                        }, 175);
                     $( evt.dragProxy ).fadeOut( "normal", function(){
                         $( this ).remove();
                     });
@@ -377,10 +413,6 @@ $(document).ready(function(){
     };
     
     
-    list = new List;
-    collection = new Collection;
-    
-    
     // Tag display
     $('.tag').live('click', function(evt){
         evt.preventDefault();
@@ -399,7 +431,7 @@ $(document).ready(function(){
             evt.preventDefault();
             list.prevPage();
         }
-    }).appendTo('#pagebody');
+    }).appendTo('#pagebody').hide();
     $('<a/>', {
         'href': '#',
         'id': 'next',
@@ -408,7 +440,7 @@ $(document).ready(function(){
             evt.preventDefault();
             list.nextPage();
         }
-    }).appendTo('#pagebody');
+    }).appendTo('#pagebody').hide();
     
     
     // Add/remove from collection links on individual statements
@@ -428,7 +460,7 @@ $(document).ready(function(){
         evt.preventDefault();
         overlay.show();
         $(this).closest('#collection').animate({
-            'height': $(window).height() - 75
+            'height': $(window).height() - 93,
         }, 400);
     }, function(evt){
         evt.preventDefault();
@@ -437,5 +469,8 @@ $(document).ready(function(){
             'height': 10
         }, 275);
     });
+    
+    list = new List;
+    collection = new Collection;
     
 });
