@@ -1,0 +1,19 @@
+{% extends "admin/base_site.html" %}
+{% load adminmedia %}
+
+{% block breadcrumbs %}{% if not is_popup %}
+<div class="breadcrumbs">
+     <a href="../../../">Home</a> &rsaquo;
+     <a href="../../">Statement</a> &rsaquo;
+     <a href="../">Statements</a> &rsaquo; 
+     {{title}}
+</div>
+{% endif %}{% endblock %}
+{% block content %}
+<p>Some of the statements you tried to import already exist:</p>
+<ul>{%for statement in errors%}
+    <li>{{statement}}</li>
+{%endfor%}</ul>
+<p>These statements have been disregarded. The other {{statements_added_count}} were added. <stong><a href="../">Back to the statements page</a></stong>.</p>
+{%endblock%}
+

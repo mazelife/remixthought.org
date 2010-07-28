@@ -112,18 +112,36 @@ class StatementAdmin(admin.ModelAdmin):
                         'text': request.POST.get("s%d" % i),
                         'tag': request.POST.get("t%d" % i)
                     }
+                    preexisting_statements = []
+                    statements_added_count = 0
                     form = StatementForm(data)
                     if form.is_valid():
                         form.save()
+                        statements_added_count += 1
                     else:
-                        err_string = ""
-                        for field, errs in form.errors.items():
-                            errs = ", ".join(errs)
-                            err_string += "%s: %s ," % (field, errs)
-                        return HttpResponseBadRequest(
-                            "Validation error: %s" % err_string
-                        )
+                        if form.errors['text'] == \
+                            [u'Statement with this Statement already exists.']:
+                            # Statement already exists.
+                            preexisting_statements.append(data['text'])
+                        else:
+                            # Some other form validation error (unlikely...)
+                            err_string = ""
+                            for field, errs in form.errors.items():
+                                errs = ", ".join(errs)
+                                err_string += "%s: %s ," % (field, errs)
+                            return HttpResponseBadRequest(
+                                "Validation error: %s" % err_string
+                            )
             export_csv()
+            if preexisting_statements:
+                return simple.direct_to_template(request,
+                    template = 'admin/statements/statement/import_errors.html',
+                    extra_context = {
+                        'title': 'Import Errors',
+                        'errors': preexisting_statements,
+                        'statements_added_count': statements_added_count
+                    }
+                )                
             url = reverse('admin:statements_statement_changelist')
             return simple.redirect_to(request, url)                      
 

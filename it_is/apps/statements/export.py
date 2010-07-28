@@ -10,8 +10,8 @@ def export_csv():
     """
     statements = ((s.text, s.tag.tag) for s in \
         Statement.objects.all().only('text', 'tag'))
-    csv_writer = csv.writer(fh)
     fh = open(CSV_DATA_FILE_PATH + ".tmp", 'w')
+    csv_writer = csv.writer(fh)
     for statement, tag in statements:
         # CVS doesn't grok unicode, so we convert entities and encode as UTF-8,
         # which it can handle. 
