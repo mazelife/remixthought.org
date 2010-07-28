@@ -23,3 +23,7 @@ HERE = path.normpath(path.dirname(__file__))
 COLOR_DATA_FILE_PATH = _get_setting('COLOR_DATA_FILE_PATH',     
     default = HERE
 )
+
+CSV_DATA_FILE_PATH = _get_setting('COLOR_DATA_FILE_PATH',     
+    default = path.join(settings.MEDIA_ROOT, "it_is_data.csv")
+)

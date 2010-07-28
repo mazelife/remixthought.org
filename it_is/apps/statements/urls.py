@@ -13,4 +13,4 @@ urlpatterns = patterns('apps.statements.views',
     url(r'api/tags/$', 'api_tags'),
     url(r'api/tags/popular/$', 'api_tags_most_used'),
     url(r'api/tags/search/(?P<q>[\w ]+)/?$', 'api_tags_search'),    
-)    
+)
