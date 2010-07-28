@@ -232,25 +232,49 @@ var List = Class.create({
 
 var Collection = Class.create(List, {
     initialize: function(){
-        this.statements = []
+        this.statements = [];
+        self = this;
+        var c = $.cookie('itis_collection');
+        if(c && c != ''){
+            $.ajax({
+                'dataType': 'json',
+                'url': api_path('list', c),
+                'success': function(data, textStatus, XMLHttpRequest){
+                    for(var i = 0; i < data.length; i++){
+                        var statement = data[i];
+                        self.add(new Statement(
+                            statement['id'],
+                            statement['tag'],
+                            statement['statement']
+                        ));
+                    }
+                }
+            });
+        }
     },
     
     
     add: function($super, obj){
         if(!this.get(obj.sid)){
             $super(obj);
-            this.updateCookie();
-            this.updateCount();
+            this.update();
         }
     },
     
     
     remove: function($super, obj){
         $super(obj);
-        this.updateCookie();
-        this.updateCount();
+        this.update();
     },
     
+    
+    
+    update: function(){
+        this.updateCookie();
+        this.updateCount();
+        this.populate();
+        adjustWindowSize();
+    },
     
     updateCookie: function(){
         var cookieValue = '';
@@ -264,8 +288,25 @@ var Collection = Class.create(List, {
     
     updateCount: function(){
         $('#collection header h2').text(this.statements.length)
+    },
+    
+    populate: function($super){
+        $('#collection > div').html(this.render());
+    },
+    
+    render: function($super){
+        var list = $('<ul/>', {
+            'class': 'collection-list'
+        });
+        
+        for(var i=0; i < this.statements.length; i++){
+            this.statements[i].render().appendTo(list);
+        }
+        
+        return list;
+        
     }
-
+    
 });
 
 
@@ -349,10 +390,11 @@ var loader = {
 $(document).ready(function(){
     
     /*  */
-    var adjustWindowSize = function(){
+    adjustWindowSize = function(){
         var w = $(window),
             p = $('#pagebody');
         p.css('height', (w.height() - parseInt(p.css('top'))));
+        $('.collection-list').css('height', (w.height() - 225));
     }
     adjustWindowSize();
     $(window).scroll(adjustWindowSize).resize(adjustWindowSize);
@@ -471,7 +513,7 @@ $(document).ready(function(){
         }, 275);
     });
     
-    list = new List;
     collection = new Collection;
+    list = new List;
     
 });
