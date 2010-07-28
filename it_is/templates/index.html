@@ -15,14 +15,13 @@
             <h1>What it is according to <strong>Everything</strong></h1>
             <nav>
                 <ul>
-                    <li id="add"><a href="{%url statements:add%}">Add Statements</a></li>
-                    <li><a href="{{MEDIA_URL}}{{csv_download_url}}">Download</a></li>
-                    <li><a href="">About</a></li>
-                    <li><a href="">Share This</a></li>
+                    <li id="add" title="Add a statement of your own."><a href="{%url statements:add%}">Add Statements</a></li>
+                    <li><a href="{{MEDIA_URL}}{{csv_download_url}}" title="Download a CSV version of our data.">Download</a></li>
+                    <li><a href="#" title="About the site">About</a></li>
+                    <li><a href="#" title="Share this site.">Share This</a></li>
                 </ul>
             </nav>
         </header>
-        
         <div id="pagebody">
             {%block content%}{%endblock%}
         </div>
