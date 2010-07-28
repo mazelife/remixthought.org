@@ -460,6 +460,9 @@ $(document).ready(function(){
     // Tag display
     $('.tag').live('click', function(evt){
         evt.preventDefault();
+        if($(this).closest('.collection-list').length){
+            $('#collection > header > h1').click();
+        }
         window.location.hash = $(this).data('tag');
         list = new List;
     });
