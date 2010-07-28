@@ -133,14 +133,14 @@ var List = Class.create({
                     var statement = data[i];
                     self.add(new Statement(
                         statement['id'],
-                        statement['tag'][0],
-                        statement['statement'],
-                        statement['tag'][2]
+                        statement['tag'],
+                        statement['statement']
                     ));
+                    if(query && i==0) var tag_display = statement['tag'][1];
                 }
                 loader.hide();
                 self.render(1).appendTo('#pagebody');
-                $('body > header > h1 > strong').text((query) ? query : 'Everything');
+                $('body > header > h1 > strong').text((tag_display) ? tag_display : 'Everything');
                 draggable.refresh();
             }
         });
@@ -271,11 +271,12 @@ var Collection = Class.create(List, {
 /**/
 var Statement = Class.create({
     sizes: ['small', 'medium', 'large'],
-    initialize: function(sid, tag, statement, color){
+    initialize: function(sid, tag, statement){
         this.sid = sid;
-        this.tag = tag;
+        this.tag_slug = tag[0];
+        this.tag = tag[1];
+        this.color = tag[2];
         this.statement = statement;
-        this.color = color;
     },
     
     links: {
@@ -300,7 +301,7 @@ var Statement = Class.create({
             id: 'statement-' + this.sid,
             draggable: 'true'
         });
-        item.find('.tag').data('tag', this.tag);
+        item.find('.tag').data('tag', this.tag_slug);
         return item.data('statement', this);
     },
     addToCollection: function(){
@@ -416,8 +417,7 @@ $(document).ready(function(){
     // Tag display
     $('.tag').live('click', function(evt){
         evt.preventDefault();
-        var tag = $(this).data('tag');
-        window.location.hash = tag;
+        window.location.hash = $(this).data('tag');
         list = new List;
     });
     
