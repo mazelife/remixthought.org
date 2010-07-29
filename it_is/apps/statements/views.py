@@ -9,7 +9,8 @@ from django.views.generic import simple
 from app_settings import CSV_DATA_FILE_PATH
 from forms import StatementFormWithCaptcha, StatementSuggestionForm
 from models import Statement, Tag
-from utils import get_param, get_numeric_param, tag_search, async_export_csv
+from utils import get_param, get_numeric_param, tag_search, async_export_csv, \
+    decode_cookie_string
 
 def index(request):
     csv_download_url = CSV_DATA_FILE_PATH.replace(settings.MEDIA_ROOT, "")
@@ -54,6 +55,20 @@ def suggest_statement(request):
         extra_context = {'form': form},
         template = 'statements/suggest_statement.html'
     )    
+
+def collection_as_csv(request):
+    """Read ids from the user's cookie, return the results as a CSV file."""
+    collection = request.COOKIES.get('itis_collection', None)
+    if collection:
+        collection = decode_cookie_string(collection)
+        csv_string = Statement.objects.get_csv(id_list=collection)
+        return HttpResponse(csv_string, mimetype="text/html")
+    else:
+        raise Http404, "No collection found."
+
+###############################################################################
+#                                   API Views
+###############################################################################
 
 def api_statements(request, count=None):
     """A view of a JSON-serialized, reverse-chronologically-ordered set of  

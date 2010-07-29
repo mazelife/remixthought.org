@@ -1,3 +1,4 @@
+import cStringIO
 import csv
 import datetime
 from os import rename
@@ -24,13 +25,31 @@ class StatementManager(models.Manager):
             return self.published().order_by("?")[:count]
         else:
             return self.published().order_by("?")
-
-            import csv
-            from os import rename
-
-            from app_settings import CSV_DATA_FILE_PATH
-            from models import Statement
-
+    
+    def get_csv(self, id_list=[]):
+        """
+        Get a CSV-formatted string of all statements, or restrict to a list of 
+        ids with ``id_list``.
+        """
+        if id_list:
+            statements = ((s.text, s.tag.tag) for s in \
+                self.published().filter(id__in=id_list).only('text', 'tag'))
+        else:
+            statements = ((s.text, s.tag.tag) for s in \
+                self.published().only('text', 'tag'))
+        fh = cStringIO.StringIO()
+        csv_writer = csv.writer(fh)
+        for statement, tag in statements:
+            # CSV doesn't grok unicode, so we convert entities and encode 
+            # as UTF-8, which it can handle. 
+            statement = unescape(statement).encode('utf-8')
+            tag = unescape(tag).encode('utf-8')
+            csv_writer.writerow((statement, tag))        
+        fh.reset()
+        retval = fh.read()
+        fh.close()
+        return retval
+        
     def export_csv(self):
         """
         Export a CSV file of all statements to the media directory.

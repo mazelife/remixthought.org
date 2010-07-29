@@ -65,9 +65,9 @@ class Statement(models.Model):
 # We're using the class_prepared signal to ensure that a CSV file is generated 
 # once on startup. The reason this has to go here is subtle: attaching a signal
 # to the Tag model requires that it be conneced before the model class is 
-# actually declared. We need to ensure that the Tag *and* statement models are
-# prepared becuase they ar both needed to generate the CSV. Thus the only place
-# this can go is between the two model classes.
+# actually declared. We need to ensure that the Tag *and* Statement models are
+# prepared becuase they are both needed to generate the CSV. Thus the only 
+# place this can go is between the two model classes.
 def export_csv_callback(sender, **kwargs):
     """ Export a CSV file when the Tag model is prepared."""
     if sender._meta.object_name == 'Tag':

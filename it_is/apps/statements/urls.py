@@ -4,6 +4,7 @@ urlpatterns = patterns('apps.statements.views',
     url(r'^$', 'index', name="index"),
     url(r'^add/$', 'add_statement', name="add"),
     url(r'^suggest/$', 'suggest_statement', name="suggest"),
+    url(r'^csv-collection/$', 'collection_as_csv', name="csv_collection"),
     # API Calls:
     url(r'api/statements/$', 'api_statements_all'),
     url(r'api/statements/(?P<count>[\d]+)/?$', 'api_statements'),

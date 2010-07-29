@@ -7,6 +7,11 @@ from models import Statement, Tag
 This module provides some utilities for working with Statements and Tags.
 """
 
+def decode_cookie_string(cs):
+    """Safely return a list of statement ids."""
+    pks = filter(lambda pk: pk.isdigit(), cs.split('%2C'))
+    return map(int, pks)
+
 def async_export_csv():
     """
     Exports a CSV data file of all statements in a separate thread.
