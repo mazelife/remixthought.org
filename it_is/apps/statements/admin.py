@@ -6,7 +6,6 @@ from django.http import HttpResponseBadRequest
 from django.views.decorators.http import require_POST
 from django.views.generic import simple
 
-from export import export_csv
 from extract import from_csv, from_url
 from forms import CSVImportForm, URLImportForm, StatementForm
 from models import Statement, Tag
@@ -132,7 +131,7 @@ class StatementAdmin(admin.ModelAdmin):
                             return HttpResponseBadRequest(
                                 "Validation error: %s" % err_string
                             )
-            export_csv()
+            Statement.objects.export_csv()
             if preexisting_statements:
                 return simple.direct_to_template(request,
                     template = 'admin/statements/statement/import_errors.html',

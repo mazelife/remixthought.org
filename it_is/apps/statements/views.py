@@ -7,7 +7,6 @@ from django.utils import simplejson
 from django.views.generic import simple
 
 from app_settings import CSV_DATA_FILE_PATH
-from export import export_csv
 from forms import StatementFormWithCaptcha, StatementSuggestionForm
 from models import Statement, Tag
 from utils import get_param, get_numeric_param, tag_search
@@ -27,7 +26,7 @@ def add_statement(request):
         form = StatementFormWithCaptcha(request.POST)
         if form.is_valid():
             statement = form.save()
-            export_csv()
+            Statement.objects.export_csv()
             return simple.redirect_to(request,
                 url=reverse("statements:index"), 
                 permanent=False
