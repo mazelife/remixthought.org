@@ -9,7 +9,7 @@ from color import color_picker
 class StatementManager(models.Manager):
 
     def published(self):
-        return self.get_query_set().filter(
+        return self.get_query_set().select_related().filter(
                 status='p'
             ).exclude(
                 date_created__gt=datetime.datetime.now()
