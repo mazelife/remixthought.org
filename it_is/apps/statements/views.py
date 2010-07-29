@@ -60,7 +60,7 @@ def collection_as_csv(request):
     """Read ids from the user's cookie, return the results as a CSV file."""
     collection = request.COOKIES.get('itis_collection', None)
     if collection:
-        collection = decode_cookie_string(collection)
+        collection = decode_cookie_string(collection, split_on='%2C')
         csv_string = Statement.objects.get_csv(id_list=collection)
         return HttpResponse(csv_string, mimetype="text/html")
     else:
@@ -128,7 +128,8 @@ def api_statements_search(request, tag=None):
 def api_statements_commalist(request, pks=''):
     statements = Statement.objects.published().only('id', 'text', 'tag')
     statements_new_keys = []
-    for statement in statements.filter(pk__in=[int(i) for i in pks.split(',')]):
+    decode_cookie_string(pks)
+    for statement in statements.filter(pk__in=decode_cookie_string(pks)):
         statements_new_keys.append(dict(
             id=statement.id, 
             statement=statement.text,

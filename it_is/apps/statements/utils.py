@@ -7,9 +7,9 @@ from models import Statement, Tag
 This module provides some utilities for working with Statements and Tags.
 """
 
-def decode_cookie_string(cs):
+def decode_cookie_string(cs, split_on=','):
     """Safely return a list of statement ids."""
-    pks = filter(lambda pk: pk.isdigit(), cs.split('%2C'))
+    pks = filter(lambda pk: pk.isdigit(), cs.split(split_on))
     return map(int, pks)
 
 def async_export_csv():
