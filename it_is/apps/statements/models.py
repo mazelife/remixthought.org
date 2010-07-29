@@ -87,7 +87,7 @@ class Tag(models.Model):
         max_length= 100,
         unique = True
     )
-    color = ColorField(blank=True)
+    color = ColorField()
     date_created = models.DateTimeField(_("Date created"),
         auto_now_add = True
     )
