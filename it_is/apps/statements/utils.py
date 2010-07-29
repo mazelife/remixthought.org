@@ -1,10 +1,27 @@
 from itertools import tee
+from threading import Thread
 
-from models import Tag
+from models import Statement, Tag
 
 """
 This module provides some utilities for working with Statements and Tags.
 """
+
+def async_export_csv():
+    """
+    Exports a CSV data file of all statements in a separate thread.
+    """
+    class ExportCSVThread(Thread):
+
+        def __init__ (self):
+            Thread.__init__(self)
+
+        def run(self):
+            Statement.objects.export_csv()
+
+    thread = ExportCSVThread()
+    thread.start()
+
 
 def get_param(request, param, method='GET'):
     """One-liner for fetching a value from a request."""

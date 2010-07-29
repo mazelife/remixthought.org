@@ -9,6 +9,7 @@ from django.views.generic import simple
 from extract import from_csv, from_url
 from forms import CSVImportForm, URLImportForm, StatementForm
 from models import Statement, Tag
+from utils import async_export_csv
 
 class StatementAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_created'
@@ -131,7 +132,7 @@ class StatementAdmin(admin.ModelAdmin):
                             return HttpResponseBadRequest(
                                 "Validation error: %s" % err_string
                             )
-            Statement.objects.export_csv()
+            async_export_csv()
             if preexisting_statements:
                 return simple.direct_to_template(request,
                     template = 'admin/statements/statement/import_errors.html',
