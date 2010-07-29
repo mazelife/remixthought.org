@@ -62,7 +62,7 @@ def collection_as_csv(request):
     if collection:
         collection = decode_cookie_string(collection, split_on='%2C')
         csv_string = Statement.objects.get_csv(id_list=collection)
-        return HttpResponse(csv_string, mimetype="text/html")
+        return HttpResponse(csv_string, mimetype="text/csv")
     else:
         raise Http404, "No collection found."
 
