@@ -114,6 +114,7 @@ class TagManager(models.Manager):
         generate the slug automatically from the given tag.
         """
         slug = slugify(tag)
+        tag = tag.title()
         obj, created = self.get_or_create(slug=slug, tag=tag)
         if created:
             obj.color = color_picker.get_color()

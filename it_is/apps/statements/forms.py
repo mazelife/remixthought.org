@@ -18,6 +18,11 @@ class StatementForm(forms.ModelForm):
         tag = self.cleaned_data['tag']
         obj, created = Tag.objects.get_or_create_from_tag(tag)
         return obj
+    
+    def clean_text(self):
+        """Remove initial capitalization."""
+        text = self.cleaned_data['text']
+        return text[0].lower() + text[1:]
         
     class Meta:
         model = Statement

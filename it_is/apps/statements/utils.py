@@ -1,5 +1,9 @@
 from itertools import tee
+from random import shuffle
 from threading import Thread
+
+from django.core.cache import cache
+from django.db.models.signals import post_save
 
 from models import Statement, Tag
 
@@ -14,7 +18,9 @@ def decode_cookie_string(cs, split_on=','):
 
 def async_export_csv():
     """
-    Exports a CSV data file of all statements in a separate thread.
+    Exports a CSV data file of all statements in a separate thread. With 
+    this, users can spawn a thread to generate a new CSV without having to
+    wait for the result.
     """
     class ExportCSVThread(Thread):
 
@@ -76,3 +82,58 @@ def _create_tag_set():
     tags = Tag.objects.all().order_by('tag').values('slug', 'tag')
     tags = ((tag['slug'], tag['tag'], tag['tag'].lower()) for tag in tags)
     globals()[_TAG_LIST_GLOBAL_KEY] = tags
+
+
+class StatementCache(object):
+    
+    """
+    A method of storing statements in cache rather than retrieving from the 
+    database. Cuts an average of 10ms from the lookup.
+    """
+    cache_key = 'statement_list'
+    ttl = 60 * 60 * 12
+    
+    def __init__(self):
+        self._set_satetements()
+    
+    def _set_satetements(self):
+        """
+        Create a list of dicts representing statements from the DB.
+        Store it using Django's low-level cache framwork.
+        """
+        statements = Statement.objects.published().only(
+            'id', 'text', 'tag'
+        )
+        statement_list = []
+        for statement in statements:
+            statement_list.insert(0, {
+                'id': statement.id,
+                'statement': statement.text,
+                'tag': [
+                    statement.tag.slug, 
+                    statement.tag.tag, 
+                    statement.tag.color
+                ]
+            })
+        cache.set(self.cache_key, statement_list, self.ttl)
+        return statement_list
+    
+    def get_statements(self):
+        """Randomly shuffle statement list and return it."""
+        statements = cache.get(self.cache_key)
+        if not statements:
+            statements = self._set_satetements()
+        shuffle(statements)
+        return statements
+    
+    def statements_update_reciever(self, sender, **kwargs):
+        """
+        A method suitable for receiving a signal when statement(s)
+        or tags(s) have changed and updating everything accordingly.
+        
+        """
+        self._set_satetements()
+
+statement_cache = StatementCache()
+post_save.connect(statement_cache.statements_update_reciever, sender=Statement)
+post_save.connect(statement_cache.statements_update_reciever, sender=Tag)

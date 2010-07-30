@@ -10,7 +10,7 @@ from app_settings import CSV_DATA_FILE_PATH
 from forms import StatementFormWithCaptcha, StatementSuggestionForm
 from models import Statement, Tag
 from utils import get_param, get_numeric_param, tag_search, async_export_csv, \
-    decode_cookie_string
+    decode_cookie_string, statement_cache
 
 def index(request):
     csv_download_url = CSV_DATA_FILE_PATH.replace(settings.MEDIA_ROOT, "")
@@ -104,17 +104,8 @@ def api_statements(request, count=None):
 
 def api_statements_all(request):
     """A view of all statements, randomized."""
-    statements = Statement.objects.get_random_set().only('id', 'text', 'tag')
-    if len(statements) == 0:
-        raise Http404, "Offset is too large."
-    statements_new_keys = []
-    for statement in statements:
-        statements_new_keys.append(dict(
-            id=statement.id, 
-            statement=statement.text,
-            tag=[statement.tag.slug, statement.tag.tag, statement.tag.color]
-        ))
-    statements = simplejson.dumps(statements_new_keys, ensure_ascii=False)
+    statements = statement_cache.get_statements()
+    statements = simplejson.dumps(statements, ensure_ascii=False)
     return HttpResponse(statements, mimetype="application/json")
 
 def api_statements_search(request, tag=None):
