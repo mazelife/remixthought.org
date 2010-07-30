@@ -375,3 +375,8 @@ body{
 		#next:hover{
 			background-position: -34px -69px;
 		}
+
+/* Sharing */
+
+body a.stbutton { padding: 0;}
+body .stico_default { background-image: none !important; }
