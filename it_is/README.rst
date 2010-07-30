@@ -3,7 +3,7 @@ What It Is
 Synopsis
 ----------------
 
-Admonition::
+admonition::
 
     DRAFT
 
