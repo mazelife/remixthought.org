@@ -6,7 +6,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from models import Statement, Tag
-from recaptcha_django import ReCaptchaField
+from recaptcha_django import ReCaptchaField, ReCaptchaWidget
 
 class StatementForm(forms.ModelForm):
     """
@@ -27,7 +27,7 @@ class StatementFormWithCaptcha(StatementForm):
     """
     A form to handle user-submitted statements.
     """
-    captcha = ReCaptchaField()
+    captcha = ReCaptchaField(widget=ReCaptchaWidget(attrs={'theme':'clean'}))
 
 
 class URLImportForm(forms.Form):
@@ -79,7 +79,7 @@ class StatementSuggestionForm(forms.Form):
         label=_("Your email (optional)"),
         required=False        
     )
-    captcha = ReCaptchaField()
+    captcha = ReCaptchaField(widget=ReCaptchaWidget(attrs={'theme':'clean'}))
     
     def clean(self):
         url = self.cleaned_data['url']
