@@ -18,7 +18,10 @@ def index(request):
         csv_download_url = csv_download_url[1:]
     return simple.direct_to_template(request,
         template = "index.html",
-        extra_context = {'csv_download_url': csv_download_url}  
+        extra_context = {
+            'csv_download_url': csv_download_url,
+            'google_analytics_account': settings.GOOGLE_ANALYTICS_ACCOUNT
+        }  
     )
 
 def add_statement(request):

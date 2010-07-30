@@ -95,6 +95,8 @@ INSTALLED_APPS = (
     'apps.statements'
 )
 
+GOOGLE_ANALYTICS_ACCOUNT = None
+
 try:
     from local_settings import *
 except ImportError:
