@@ -20,7 +20,8 @@ def index(request):
         template = "index.html",
         extra_context = {
             'csv_download_url': csv_download_url,
-            'google_analytics_account': settings.GOOGLE_ANALYTICS_ACCOUNT
+            'google_analytics_account': settings.GOOGLE_ANALYTICS_ACCOUNT,
+            'share_this_account': settings.SHARE_THIS_ACCOUNT
         }  
     )
 

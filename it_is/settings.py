@@ -96,6 +96,7 @@ INSTALLED_APPS = (
 )
 
 GOOGLE_ANALYTICS_ACCOUNT = None
+SHARE_THIS_ACCOUNT = None
 
 try:
     from local_settings import *
