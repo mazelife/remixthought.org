@@ -3,8 +3,6 @@ What It Is
 Synopsis
 ----------------
 
-admonition::
-
     DRAFT
 
 “What It Is” is a tool for collecting all statements, from all fields of knowledge, that describe what “it is,” and for remixing them into new knowledge. All disciplines use the phrase “it is” to describe and construct their respective realities, or domains of reality. “What It Is” asks the question: what if we took all of those descriptions, freed them from their original context, collected them in one database, and allowed people to take them and remix them for their own purposes? By doing so, we believe that new realties will emerge, new ideas of what “it” is, or could be, between and beyond all false distinctions of knowledge.
