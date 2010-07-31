@@ -2,7 +2,7 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns('apps.statements.views', 
     url(r'^$', 'index', name="index"),
-    url(r'^most_used/$', 'most_used', name="most_used"),
+    url(r'^most-used/$', 'most_used', name="most_used"),
     url(r'^add/$', 'add_statement', name="add"),
     url(r'^suggest/$', 'suggest_statement', name="suggest"),
     url(r'^csv-collection/$', 'collection_as_csv', name="csv_collection"),
