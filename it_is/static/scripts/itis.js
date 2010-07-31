@@ -12,14 +12,14 @@ var slugify = function(text) {
 // Returns the URL to the API with the passed type and query.
 var api_path = function(type, query){
     return {
-        'all': 'api/statements/',
-        'random': 'api/statements/' + encodeURI(query) + '/',
-        'search': 'api/statements/search/' + encodeURI(query) + '/',
-        'list': 'api/statements/list/' + encodeURI(query),
-        'tags': 'api/tags/',
-        'popular_tags': 'api/tags/popular/',
-        'by_tag': 'api/tags/search/' + encodeURI(query) + '/',
-        'count': 'api/statements/count/',
+        'all': '/it-is/api/statements/',
+        'random': '/it-is/api/statements/' + encodeURI(query) + '/',
+        'search': '/it-is/api/statements/search/' + encodeURI(query) + '/',
+        'list': '/it-is/api/statements/list/' + encodeURI(query),
+        'tags': '/it-is/api/tags/',
+        'popular_tags': '/it-is/api/tags/popular/',
+        'by_tag': '/it-is/api/tags/search/' + encodeURI(query) + '/',
+        'count': '/it-is/api/statements/count/',
     }[type]
 }
 
