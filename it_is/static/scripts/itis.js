@@ -7,14 +7,14 @@ $.featureSupport({
 // Returns the URL to the API with the passed type and query.
 var api_path = function(type, query){
     return {
-        'all': '/api/statements/',
-        'random': '/api/statements/' + encodeURI(query) + '/',
-        'search': '/api/statements/search/' + encodeURI(query) + '/',
-        'list': '/api/statements/list/' + encodeURI(query) + '/',
-        'tags': '/api/tags/',
-        'popular_tags': '/api/tags/popular/',
-        'by_tag': '/api/tags/search/' + encodeURI(query) + '/',
-        'count': '/api/statements/count/',
+        'all': 'api/statements/',
+        'random': 'api/statements/' + encodeURI(query) + '/',
+        'search': 'api/statements/search/' + encodeURI(query) + '/',
+        'list': 'api/statements/list/' + encodeURI(query) + '/',
+        'tags': 'api/tags/',
+        'popular_tags': 'api/tags/popular/',
+        'by_tag': 'api/tags/search/' + encodeURI(query) + '/',
+        'count': 'api/statements/count/',
     }[type]
 }
 
