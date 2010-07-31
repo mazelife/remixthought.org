@@ -466,7 +466,7 @@ var loader = {
 
 $(document).ready(function(){
     
-    window.modal = new Modal('/intro/');
+    window.modal = new Modal('/it-is/intro/');
     
     /*  */
     adjustWindowSize = function(){
