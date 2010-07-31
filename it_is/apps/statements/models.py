@@ -75,7 +75,7 @@ def export_csv_callback(sender, **kwargs):
         Statement.objects.export_csv()
 
 from django.db.models.signals import class_prepared
-class_prepared.connect(export_csv_callback)
+#class_prepared.connect(export_csv_callback)
 
 
 class Tag(models.Model):

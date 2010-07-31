@@ -4,13 +4,18 @@ $.featureSupport({
 });
 
 
+var slugify = function(text) {
+    return text.replace(/\s+/g,'-').replace(/[^a-zA-Z0-9\-]/g,'').toLowerCase();
+}
+
+
 // Returns the URL to the API with the passed type and query.
 var api_path = function(type, query){
     return {
         'all': 'api/statements/',
         'random': 'api/statements/' + encodeURI(query) + '/',
         'search': 'api/statements/search/' + encodeURI(query) + '/',
-        'list': 'api/statements/list/' + encodeURI(query) + '/',
+        'list': 'api/statements/list/' + encodeURI(query),
         'tags': 'api/tags/',
         'popular_tags': 'api/tags/popular/',
         'by_tag': 'api/tags/search/' + encodeURI(query) + '/',
@@ -26,6 +31,39 @@ var hash = function(){
 }
 
 
+var Modal = Class.create({
+    initialize: function(url){
+        this.url = url;
+        overlay.show(false, 'showing-modal');
+        $.ajax({
+            'dataType': 'html',
+            'url': url,
+            'success': function(data, textStatus, XMLHttpRequest){
+                overlay.overlay.html(data);
+                $('<a/>', {
+                    href: '#',
+                    class: 'close',
+                    click: function(evt){
+                        evt.preventDefault();
+                        modal.close();
+                    }
+                }).appendTo(overlay.overlay);
+                $(window).trigger('newModal');
+            }
+        });
+    },
+    close: function(){
+        overlay.overlay.children('section').animate({
+            left: '-=600px',
+            opacity: 0
+        }, 200, function(){
+            $(this).remove();
+            overlay.hide();
+        });
+    }
+});
+
+
 var List = Class.create({
     perpage: 5,
     
@@ -34,6 +72,7 @@ var List = Class.create({
         this.currentPage = 1;
         
         $('.statement-list').remove();
+        
         this.populate(hash());
     },
     
@@ -124,25 +163,46 @@ var List = Class.create({
         this.statements = [];
         var self = this;
         
+        $('#pagebody .statement-list').remove();
         loader.show();
+        
+        var url, collection = false;
+        if(query){
+            url = api_path('search', query);
+            if(query.match(/^[\d,]+/)){
+                url = api_path('list', query)
+                collection = true;
+            }
+        }else{
+            url = api_path('all');
+        };
         
         $.ajax({
             'dataType': 'json',
-            'url': (query) ? api_path('search', query) : api_path('all'),
+            'url': url,
             'success': function(data, textStatus, XMLHttpRequest){
-                for(var i = 0; i < data.length; i++){
-                    var statement = data[i];
-                    self.add(new Statement(
-                        statement['id'],
-                        statement['tag'],
-                        statement['statement']
-                    ));
-                    if(query && i==0) var tag_display = statement['tag'][1];
-                }
                 loader.hide();
-                self.render(1).appendTo('#pagebody');
-                $('body > header > h1 > strong').text((tag_display) ? tag_display : 'Everything');
-                draggable.refresh();
+                if(data.length){
+                    for(var i = 0; i < data.length; i++){
+                        var statement = data[i];
+                        self.add(new Statement(
+                            statement['id'],
+                            statement['tag'],
+                            statement['statement']
+                        ));
+                        if(query && i==0) var tag_display = statement['tag'][1];
+                    }
+                    self.render(1).appendTo('#pagebody');
+                    draggable.refresh();
+                }else{
+                    $('#next:visible, #prev:visible').fadeOut(250);
+                    $('<ul/>', {
+                        id: 'empty',
+                        class: 'statement-list',
+                        html: '<li>There are no statements with this tag.</li>'
+                    }).appendTo('#pagebody');
+                }
+                $('body > header > h1 > a').text((collection) ? 'A Collection' : ((tag_display) ? tag_display : 'Everything'));
             }
         });
     },
@@ -291,20 +351,29 @@ var Collection = Class.create(List, {
     },
     
     populate: function($super){
-        $('#collection > div').html(this.render());
+        $('#collection > div').html('');
+        var objs = this.render();
+        for(var i = 0; i < objs.length; i++){
+            $('#collection > div').append(objs[i]);
+        }
     },
     
     render: function($super){
-        var list = $('<ul/>', {
-            'class': 'collection-list'
-        });
+        var list = [];
         
+        list.push($('<div/>', {
+            'class': 'collection-url',
+            'html': '<label for="collection-url">Share my collection: </label><input readonly="readonly" type="text" id="collection-url" name="collection-url" value="http://remixthought.org/it-is/#' + $.cookie('itis_collection') + '"/>'
+        }));
+        
+        list.push($('<ul/>', {
+            'class': 'collection-list'
+        }));
         for(var i=0; i < this.statements.length; i++){
-            this.statements[i].render().appendTo(list);
+            this.statements[i].render().appendTo(list[1]);
         }
         
         return list;
-        
     }
     
 });
@@ -362,14 +431,22 @@ var overlay = {
     overlay: $('<div/>', {
         id: 'overlay'
     }).appendTo('body').hide(),
-    'show': function(showArrow){
-        this.overlay.fadeIn(150);
+    'show': function(showArrow, bodyClass){
+        var body = $('body');
+        this.overlay.fadeIn(150, function(){
+            body.addClass('overlay');
+        });
         if(showArrow) this.overlay.addClass('arrow');
+        if(bodyClass !== undefined) $('body').addClass(bodyClass).data('class', bodyClass);
     },
     'hide': function(){
+        var body = $('body');
         this.overlay.fadeOut(150, function(){
+            body.removeClass('overlay');
             $(this).removeClass('arrow');
         });
+        var bodyClass = body.data('class');
+        if(bodyClass) body.removeClass(bodyClass).data('class', null);
     }
 };
 
@@ -389,18 +466,21 @@ var loader = {
 
 $(document).ready(function(){
     
+    window.modal = new Modal('/intro/');
+    
     /*  */
     adjustWindowSize = function(){
         var w = $(window),
             p = $('#pagebody');
         p.css('height', (w.height() - parseInt(p.css('top'))));
-        $('.collection-list').css('height', (w.height() - 225));
+        $('#overlay > section').css('height', (w.height() - 225));
+        $('.collection-list').css('height', (w.height() - 256));
     }
     adjustWindowSize();
-    $(window).scroll(adjustWindowSize).resize(adjustWindowSize);
+    $(window).scroll(adjustWindowSize).resize(adjustWindowSize).bind('newModal', adjustWindowSize);
     
     
-    draggable = {
+    window.draggable = {
         refresh: function(){
             if(this.draggers){
                 this.draggers.each(function(index, element){
@@ -416,9 +496,9 @@ $(document).ready(function(){
                 return false;
             };
             
-            $('.statement')
+            $('#pagebody .statement')
                 .bind('dragstart', function(evt){
-                    overlay.show(true);
+                    overlay.show(true, 'showing-collection');
                     $('#collection').addClass('dragging').animate({
                             'height': '+=15'
                         }, 175);
@@ -462,8 +542,11 @@ $(document).ready(function(){
         evt.preventDefault();
         if($(this).closest('.collection-list').length){
             $('#collection > header > h1').click();
+        }else if($(this).closest('#overlay').length){
+            modal.close();
         }
-        window.location.hash = $(this).data('tag');
+        var hash = slugify($(this).html());
+        window.location.hash = ((hash == 'everything') ? null : hash);
         list = new List;
     });
     
@@ -504,7 +587,7 @@ $(document).ready(function(){
     // Show and hide "My Collection" panel
     $('#collection > header > h1').toggle(function(evt){
         evt.preventDefault();
-        overlay.show();
+        overlay.show(false, 'showing-collection');
         $(this).closest('#collection').animate({
             'height': $(window).height() - 93,
         }, 400);
@@ -516,7 +599,16 @@ $(document).ready(function(){
         }, 275);
     });
     
-    collection = new Collection;
-    list = new List;
+    $('.modal-nav').live('click', function(evt){
+        evt.preventDefault();
+        window.modal = new Modal($(this).attr('href'));
+    });
+    
+    $('#collection-url').live('focus', function(){
+        this.select();
+    });
+    
+    window.collection = new Collection;
+    window.list = new List;
     
 });

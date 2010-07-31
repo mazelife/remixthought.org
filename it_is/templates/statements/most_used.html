@@ -1,0 +1,8 @@
+<section id="most-used">
+	<ul>
+		<li><a href="#" class="tag">Everything</a></li>
+		{% for tag in tags %}
+		<li><a href="#{{ tag.slug }}" class="tag">{{ tag }}</a></li>
+		{% endfor %}
+	</ul>
+</section>

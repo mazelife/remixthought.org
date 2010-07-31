@@ -70,6 +70,14 @@ def collection_as_csv(request):
     else:
         raise Http404, "No collection found."
 
+
+def most_used(request):
+    kwargs = {'count': 200}
+    tags = Tag.objects.most_used(**kwargs)
+    return simple.direct_to_template(request,
+        extra_context = {'tags': tags},
+        template = 'statements/most_used.html'
+    )
 ###############################################################################
 #                                   API Views
 ###############################################################################
