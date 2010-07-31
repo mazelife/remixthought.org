@@ -23,7 +23,7 @@ def staging():
     _webfaction()
     env.path = "%(base_path)s/it_is_staging/staging_env/" % env
     
-def producton():
+def production():
     _webfaction()
     env.path = "%(base_path)s/it_is_production/production_env/" % env
 
