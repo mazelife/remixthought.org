@@ -1,5 +1,5 @@
 <section id="add-statement">
-	<form action="" method="post">{%csrf_token%}
+	<form action="{%url statements:add%}" method="post">{%csrf_token%}
 	{{form.as_p}}
 	<button type="submit">Add</button>
 	</form>
