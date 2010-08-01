@@ -12,14 +12,14 @@ var slugify = function(text) {
 // Returns the URL to the API with the passed type and query.
 var api_path = function(type, query){
     return {
-        'all': '/it-is/api/statements/',
-        'random': '/it-is/api/statements/' + encodeURI(query) + '/',
-        'search': '/it-is/api/statements/search/' + encodeURI(query) + '/',
-        'list': '/it-is/api/statements/list/' + encodeURI(query),
-        'tags': '/it-is/api/tags/',
-        'popular_tags': '/it-is/api/tags/popular/',
-        'by_tag': '/it-is/api/tags/search/' + encodeURI(query) + '/',
-        'count': '/it-is/api/statements/count/',
+        'all': BASE_PATH + 'api/statements/',
+        'random': BASE_PATH + 'api/statements/' + encodeURI(query) + '/',
+        'search': BASE_PATH + 'api/statements/search/' + encodeURI(query) + '/',
+        'list': BASE_PATH + 'api/statements/list/' + encodeURI(query),
+        'tags': BASE_PATH + 'api/tags/',
+        'popular_tags': BASE_PATH + 'api/tags/popular/',
+        'by_tag': BASE_PATH + 'api/tags/search/' + encodeURI(query) + '/',
+        'count': BASE_PATH + 'api/statements/count/',
     }[type]
 }
 
@@ -466,7 +466,7 @@ var loader = {
 
 $(document).ready(function(){
     
-    window.modal = new Modal('/it-is/intro/');
+    window.modal = new Modal(BASE_PATH + 'intro/');
     
     /*  */
     adjustWindowSize = function(){
