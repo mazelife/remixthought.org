@@ -1,3 +1,5 @@
+from urlparse import urlparse
+
 from django.conf import settings
 from django.core import serializers
 from django.core.urlresolvers import reverse
@@ -16,13 +18,14 @@ def index(request):
     csv_download_url = CSV_DATA_FILE_PATH.replace(settings.MEDIA_ROOT, "")
     if csv_download_url.startswith("/"):
         csv_download_url = csv_download_url[1:]
+    base_path = ''.join(urlparse(request.get_full_path())[0:3])
     return simple.direct_to_template(request,
         template = "index.html",
         extra_context = {
             'csv_download_url': csv_download_url,
             'google_analytics_account': settings.GOOGLE_ANALYTICS_ACCOUNT,
             'share_this_account': settings.SHARE_THIS_ACCOUNT,
-            'base_url': request.path
+            'base_path': base_path
         }  
     )
 
