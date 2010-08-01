@@ -3,10 +3,10 @@
         {% for field in form %}
             <div class="fieldWrapper" id="{{field.name}}_field">
                 {{ field.errors }}
-                {{ field.label_tag }}: {{ field }}
+                {{ field.label_tag }} {{ field }}
             </div>
         {% endfor %}
-        <button type="submit">Add</button>
+        <button type="submit">Add Statement</button>
 	</form>
 </section>
 <style type="text/css">#honeypot_field { display: none;}</style>
