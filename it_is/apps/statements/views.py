@@ -16,7 +16,6 @@ def index(request):
     csv_download_url = CSV_DATA_FILE_PATH.replace(settings.MEDIA_ROOT, "")
     if csv_download_url.startswith("/"):
         csv_download_url = csv_download_url[1:]
-    import pdb; pdb.set_trace()
     return simple.direct_to_template(request,
         template = "index.html",
         extra_context = {
