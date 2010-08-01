@@ -1,6 +1,12 @@
 <section id="add-statement">
 	<form action="{%url statements:add%}" method="post">{%csrf_token%}
-	{{form.as_p}}
-	<button type="submit">Add</button>
+        {% for field in form %}
+            <div class="fieldWrapper" id="{{field.name}}_field">
+                {{ field.errors }}
+                {{ field.label_tag }}: {{ field }}
+            </div>
+        {% endfor %}
+        <button type="submit">Add</button>
 	</form>
 </section>
+<style type="text/css">#honeypot_field { display: none;}</style>

@@ -33,7 +33,11 @@ class StatementFormWithCaptcha(StatementForm):
     A form to handle user-submitted statements.
     """
     #captcha = ReCaptchaField(widget=ReCaptchaWidget(attrs={'theme':'clean'}))
-    pass
+    honeypot = forms.CharField(
+        max_length=100, 
+        label=_("Email"), 
+        required=False
+    )
 
 
 class URLImportForm(forms.Form):

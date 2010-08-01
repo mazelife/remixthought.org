@@ -487,3 +487,7 @@ body{
 
 body a.stbutton { padding: 0;}
 body .stico_default { background-image: none !important; }
+
+/* Add Form */
+
+#honeypot_field { display: none;}

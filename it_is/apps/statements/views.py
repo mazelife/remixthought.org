@@ -34,8 +34,9 @@ def add_statement(request):
     if request.method == 'POST':
         form = StatementFormWithCaptcha(request.POST)
         if form.is_valid():
-            statement = form.save()
-            async_export_csv()
+            if form.cleaned_data['honeypot'] == '':
+                statement = form.save()
+                async_export_csv()
             return simple.redirect_to(request,
                 url=reverse("statements:index"), 
                 permanent=False
