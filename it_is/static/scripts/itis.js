@@ -41,9 +41,9 @@ var Modal = Class.create({
             'success': function(data, textStatus, XMLHttpRequest){
                 overlay.overlay.html(data);
                 $('<a/>', {
-                    href: '#',
-                    class: 'close',
-                    click: function(evt){
+                    'href': '#',
+                    'class': 'close',
+                    'click': function(evt){
                         evt.preventDefault();
                         modal.close();
                     }
@@ -197,9 +197,9 @@ var List = Class.create({
                 }else{
                     $('#next:visible, #prev:visible').fadeOut(250);
                     $('<ul/>', {
-                        id: 'empty',
-                        class: 'statement-list',
-                        html: '<li>There are no statements with this tag.</li>'
+                        'id': 'empty',
+                        'class': 'statement-list',
+                        'html': '<li>There are no statements with this tag.</li>'
                     }).appendTo('#pagebody');
                 }
                 $('body > header > h1 > a').text((collection) ? 'A Collection' : ((tag_display) ? tag_display : 'Everything'));
