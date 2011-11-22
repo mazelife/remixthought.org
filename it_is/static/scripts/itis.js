@@ -5,6 +5,9 @@ $.featureSupport({
 
 
 var slugify = function(text) {
+    // Remove starting or trailing whitespace, replace space with "-", strip
+    // non-alphanumeric chars and lower case.
+    text = text.replace(/(^[ ]+)/, "").replace(/[ ]+$/, "");
     return text.replace(/\s+/g,'-').replace(/[^a-zA-Z0-9\-]/g,'').toLowerCase();
 }
 

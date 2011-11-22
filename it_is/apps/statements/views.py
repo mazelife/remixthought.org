@@ -83,6 +83,13 @@ def most_used(request):
         extra_context = {'tags': tags},
         template = 'statements/most_used.html'
     )
+
+def tags(request):
+    tags = Tag.objects.most_used(count=40)
+    return simple.direct_to_template(request,
+        template = 'statements/tags.html',
+        extra_context = {'tags': tags},
+    )    
     
 ###############################################################################
 #                                   API Views
@@ -166,11 +173,8 @@ def api_tags(request):
 
 def api_tags_search(request, q=None):
     """A view of a tag search."""
-    if len(q) < 2:
-        return HttpResponseBadRequest((
-            "Query must be at least 2 characters long."
-        ))
     tags = tag_search(q)
+    print tags
     tags = simplejson.dumps(tags, ensure_ascii=False)
     return HttpResponse(tags, mimetype="application/json")
 

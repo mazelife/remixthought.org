@@ -57,13 +57,11 @@ def tag_search(q, limit=None):
     Benchmarking indicates that this is about 170x faster than doing the same 
     query in SQL (i.e. ``Tag.objects.filter(tag__istartswith=q)``).
     """
-    if len(q) < 2:
-        return None
     if not globals().has_key(_TAG_LIST_GLOBAL_KEY):
         _create_tag_set()
     tags_origin = globals()[_TAG_LIST_GLOBAL_KEY]
     # tags_origin is a generator which, once used, cannot be rewound, so we'll 
-    # copy it usint itertools.tee().
+    # copy it using itertools.tee().
     globals()[_TAG_LIST_GLOBAL_KEY], tags = tee(tags_origin) 
     matches = []
     q = q.lower()

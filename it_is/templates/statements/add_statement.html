@@ -1,9 +1,13 @@
 <section id="add-statement">
+	<p>Add statements about what "it is" here, and tag the "field" from which the statement came (e.g. Buddhism, Poetry, Biology).</p>
 	<form action="{%url statements:add%}" method="post">{%csrf_token%}
         {% for field in form %}
             <div class="fieldWrapper" id="{{field.name}}_field">
                 {{ field.errors }}
                 {{ field.label_tag }} {{ field }}
+                {%ifequal field.name 'text'%}<p class="help-text">Statement must begin with "it is".</p>
+                {%else%}<p class="help-text">One tag per statement</p>
+                {%endifequal%}
             </div>
         {% endfor %}
         <button type="submit">Add Statement</button>

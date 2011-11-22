@@ -3,16 +3,16 @@
     <head>
         <title>{%block title%}What It Is.{%endblock%}</title>
         <meta charset="utf-8" />
-        <link rel="shortcut icon" href="{{MEDIA_URL}}images/favicon.ico" type="image/x-icon">
-        <link rel="stylesheet" href="{{MEDIA_URL}}styles/screen.css" type="text/css" media="screen" />
+        <link rel="shortcut icon" href="{{STATIC_URL}}images/favicon.ico" type="image/x-icon">
+        <link rel="stylesheet" href="{{STATIC_URL}}styles/screen.css" type="text/css" media="screen" />
         <meta name="description" content="'What It Is' collects statements that describe what 'it' is, and provides a playground to explore these statements and discover new possibilities for what 'it' could be.">
         <meta name="keywords" content="it is, what it is, remix, dj, dj of thought, thought dj, remix knowledge, remix thought, quantum semantics, object-oriented thought, radical recombinance, open-source knowledge, semantic web, collaborative, database, database of descriptions">
-        <link rel="image_src" href="{{MEDIA_URL}}images/badge.png">
+        <link rel="image_src" href="{{STATIC_URL}}images/badge.png">
         {%block head%}{%endblock%}
     </head>
     <body>
         <header>
-            <h1>What it is according to <a href="{%url statements:most_used%}" class="modal-nav">Everything</a></h1>
+            <h1>What it is according to <a href="{%url statements:tags%}" class="modal-nav">Everything</a></h1>
             <nav>
                 <ul>
                     <li id="add" title="Add a statement of your own."><a href="{%url statements:add%}" class="modal-nav">Add Statements</a></li>
@@ -33,15 +33,15 @@
             <div></div>
         </section>
         {%block scripts%}
-        <script>var MEDIA_URL = "{{MEDIA_URL}}"; var BASE_PATH = "{{base_path}}";</script>
-        <script src="{{MEDIA_URL}}scripts/prototype-mini.js" type="text/javascript"></script>
-        <script src="{{MEDIA_URL}}scripts/js-interpolate-0.1.js" type="text/javascript"></script>
-        <script src="{{MEDIA_URL}}scripts/jquery-1.4.2.js" type="text/javascript"></script>
-        <script src="{{MEDIA_URL}}scripts/jquery.featuresupport-0.1.js" type="text/javascript"></script>
-        <script src="{{MEDIA_URL}}scripts/jquery.cookie.js" type="text/javascript"></script>
-        <script src="{{MEDIA_URL}}scripts/jquery.event.drag.js" type="text/javascript"></script>
-        <script src="{{MEDIA_URL}}scripts/jquery.event.drop.js" type="text/javascript"></script>
-        <script src="{{MEDIA_URL}}scripts/itis.js" type="text/javascript"></script>
+        <script>var STATIC_URL = "{{STATIC_URL}}"; var BASE_PATH = "{{base_path}}";</script>
+        <script src="{{STATIC_URL}}scripts/prototype-mini.js" type="text/javascript"></script>
+        <script src="{{STATIC_URL}}scripts/js-interpolate-0.1.js" type="text/javascript"></script>
+        <script src="{{STATIC_URL}}scripts/jquery-1.4.2.js" type="text/javascript"></script>
+        <script src="{{STATIC_URL}}scripts/jquery.featuresupport-0.1.js" type="text/javascript"></script>
+        <script src="{{STATIC_URL}}scripts/jquery.cookie.js" type="text/javascript"></script>
+        <script src="{{STATIC_URL}}scripts/jquery.event.drag.js" type="text/javascript"></script>
+        <script src="{{STATIC_URL}}scripts/jquery.event.drop.js" type="text/javascript"></script>
+        <script src="{{STATIC_URL}}scripts/itis.js" type="text/javascript"></script>
         {%endblock%}
         <script type="text/javascript">
           /* Google Analytics */

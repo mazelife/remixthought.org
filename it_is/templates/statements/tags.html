@@ -1,0 +1,97 @@
+<section id="tags">
+        <section id="tag-search">
+            <h2>Search for Topics</h2>
+            <input type="text" value="">
+            <ul></ul>
+        </section>
+        <section id="most-used">
+        	<h2>Most Used Topics</h2>
+        	<a href="#" id="toggle">Show Most Used Topics &raquo;</a>
+        	<ul>
+        		<li><a href="#" class="tag">Everything</a></li>
+        		{% for tag in tags %}
+        		<li><a href="#{{ tag.slug }}" class="tag">{{ tag }}</a></li>
+        		{% endfor %}
+        	</ul>
+        </section>
+        <script>
+        tag_manager = (function() {
+
+        var first_keyup = true;
+        var first_use = true;
+        var tag_container = $("#tag-search ul");
+        var most_used_container = $("#most-used ul, #most-used h2");
+        var most_used_toggle = $("#most-used a#toggle")
+        var url = ''
+        var last_url = '';
+        
+        return {
+            'init' : function () {
+                most_used_toggle.hide()
+                most_used_toggle.click(this.clear_search)
+                var self = this;
+                var tag_field = $("#tag-search input");
+                tag_field.attr('value', 'Start typing')
+                tag_field.click(function(evt) {
+                   if (first_use) {
+                        tag_field.attr('value', '');
+                        first_use = false;
+                    }
+                }); 
+                tag_field.keyup(function(evt) {
+                    var querystring = $(this).attr('value');
+                    url = api_path('by_tag', querystring)
+                    if (first_keyup) {
+                        first_keyup = false;
+                        self.get_data.bind(self).delay(1);
+                    }
+                });
+            },
+            'get_data': function() {
+                if (url === last_url) { return false; }
+                var self = this;
+                $.get(url, function(data){
+                    if (data.length > 0) {
+                        self.render_list(data)
+                    }
+                    else {
+                        self.render_notfound();
+                    }
+                });
+                last_url = url;
+                first_keyup = true;
+            },
+        
+            'render_list': function(tag_list) {
+                tag_container.text('');
+                most_used_container.hide();
+                most_used_toggle.show();
+                for (var i = 0; i < tag_list.length; i++) {
+                    var slug = tag_list[i][0]
+                    var tag = tag_list[i][1]
+                    var html = '<li><a href="#%(slug)s" class="tag">%(tag)s</a></li>';
+                    html = $(html.interpolate({
+                        'tag': tag,
+                        'slug': slug
+                    }));
+                    tag_container.append(html);
+                }
+            },
+            'render_notfound': function() {
+                tag_container.text('');
+                tag_container.append($("<li>Nothing found.</li>"));
+            },
+            'clear_search': function() {
+                if (arguments.length > 0) {
+                    arguments[0].preventDefault();
+                }
+                tag_container.text('');
+                most_used_container.show();
+                most_used_toggle.hide();
+                $("#tag-search input").attr('value', '');
+            }
+        }})();
+        
+        tag_manager.init()
+        </script>
+</section>

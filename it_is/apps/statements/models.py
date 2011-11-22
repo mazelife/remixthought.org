@@ -18,9 +18,13 @@ class Statement(models.Model):
     """ A model of a statement. """
     text = models.TextField(_("Statement"), 
         db_index = True,
-        unique = True
+        unique = True,
+        help_text = _("Must begin with \"it is\"")
     )
-    tag = models.ForeignKey("Tag")
+    tag = models.ForeignKey(
+        "Tag",
+        help_text = _("One per statement")
+    )
     status = models.CharField(_("Status"), 
         choices = _STATEMENT_STATUS,
         db_index = True,

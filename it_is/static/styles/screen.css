@@ -154,6 +154,7 @@ body{
 		#overlay > section p{
 			font-weight: normal;
 		}
+		#overlay > section input,
 		#overlay > section ul{
 			margin-top: 22px;
 		}
@@ -170,25 +171,59 @@ body{
 		#overlay #about-this-project ul{
 			margin: 16px 0;
 		}
-	#overlay #most-used{
+	#overlay #tag-search,
+	#overlay #most-used {
 		font-size: 18px;
 		line-height: 18px;
 	}
+	
+	    #overlay #tag-search input {
+            border: 0px;
+            color: #6a6a67;
+            font-size: 26px;
+            height: 55px;
+            padding: 0 10px;
+	        width: 528px;
+	        -moz-border-radius: 10px;
+	        -webkit-border-radius: 10px;
+	    }
+	
+	#overlay #tag-search {
+	    margin-bottom: 10px;
+	}
+	#overlay #most-used {
+	    border-top: 1px solid #6a6a67;
+	    padding-top: 26px;
+	}
+		#overlay #tag-search ul {
+		    overflow: hidden;
+		    width: 100%;
+		}
+		#overlay #tag-search li,
 		#overlay #most-used li{
 			cursor: pointer;
 			width: 33%;
 			float: left;
 			margin-bottom: 12px;
 		}
+			#overlay #tag-search li:nth-child(3n-2),
 			#overlay #most-used li:nth-child(3n-2){
 				clear: left;
 			}
+        #overlay #tag-search a,
 		#overlay #most-used a{
 			text-decoration: none;
 			color: #FFF;
 		}
 			#overlay #most-used a:hover{
 				text-decoration: underline;
+			}
+			
+			#overlay #most-used a#toggle {
+			    color:#E5243F;
+                float:left;
+                font-weight: bold;
+                margin-top:-18px;
 			}
 
 #loader{
@@ -489,10 +524,23 @@ body a.stbutton { padding: 0;}
 body .stico_default { background-image: none !important; }
 
 /* Add Form */
+
 #add-statement label {
     display:block;
     float:left;
     width:180px;
+}
+#add-statement p.help-text {
+    font-size:14px;
+    padding-left:187px;
+    padding-top:6px;
+    width:325px;
+}
+#add-statement p { 
+    font-size:18px;
+    line-height:19px;
+    margin-bottom:20px;
+    width:600px;
 }
 #add-statement button { font-size: 16px; margin-top: 30px;}
 #honeypot_field { display: none;}

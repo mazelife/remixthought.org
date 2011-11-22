@@ -1,4 +1,5 @@
 import csv
+from os import path
 import re
 from urllib import urlopen
 
@@ -96,7 +97,15 @@ def from_csv(file_obj, is_excel=False):
 #---------------------------------------------------------
 
 
-sentence_detector = nltk.data.load('nltk:tokenizers/punkt/english.pickle')
+def get_sentence_detector():
+    # FIXME: This is fucking dumb. There has to be a better way.
+    from apps import statements
+    pth = path.join(
+        path.dirname(statements.__file__), 'english.pickle'
+    )
+    return nltk.data.load("file:/" + pth)
+
+sentence_detector = get_sentence_detector()
 
 AFFIRMATIVES = (
     re.compile(".*it is(?!n't)(?! not)[ ]+"), 

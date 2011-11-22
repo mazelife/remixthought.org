@@ -1,4 +1,5 @@
-import math 
+import math
+import re
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
@@ -15,7 +16,7 @@ class StatementForm(forms.ModelForm):
     tag = forms.CharField(max_length=100)
     
     def clean_tag(self):
-        tag = self.cleaned_data['tag']
+        tag = self.cleaned_data['tag'].strip()
         obj, created = Tag.objects.get_or_create_from_tag(tag)
         return obj
     
