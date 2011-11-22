@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 
-urlpatterns = patterns('apps.statements.views', 
+urlpatterns = patterns('it_is.apps.statements.views', 
     url(r'^$', 'index', name="index"),
     url(r'^most-used/$', 'most_used', name="most_used"),
     url(r'^tags/$', 'tags', name="tags"),    

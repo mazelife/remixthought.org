@@ -89,7 +89,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.admin',
     'django.contrib.flatpages',
-    'apps.statements'
+    'it_is.apps.statements'
 )
 
 GOOGLE_ANALYTICS_ACCOUNT = get_env_setting(env, "GOOGLE_ANALYTICS_ACCOUNT")
