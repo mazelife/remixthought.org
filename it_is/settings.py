@@ -39,8 +39,8 @@ SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
 
-MEDIA_ROOT = get_folder_path('static')
-MEDIA_URL = ''
+MEDIA_ROOT = get_folder_path('media')
+MEDIA_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 MEDIA_ROOT = '/home/dotcloud/data/media/'
@@ -52,6 +52,9 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+STATICFILES_DIRS = (
+    get_folder_path('static')
 )
 
 if 'SECRET_KEY' in env:
