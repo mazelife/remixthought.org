@@ -1,8 +1,15 @@
-# Django settings for it_is project.
+import json
+from  project_utils import get_env_setting, get_folder_path
 
-import project_utils
 
-DEBUG = False
+try:
+    with open('/home/dotcloud/environment.json') as f:
+        env = json.load(f)
+except IOError:
+    env = {}
+
+
+DEBUG = get_env_setting(env, "DEBUG", default=True)
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -11,16 +18,18 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'it_is',
+        'USER': get_env_setting(env, 'DOTCLOUD_DB_SQL_LOGIN'),
+        'PASSWORD': get_env_setting(env, 'DOTCLOUD_DB_SQL_PASSWORD'),
+        'HOST': get_env_setting(env, 'DOTCLOUD_DB_SQL_HOST'),
+        'PORT': int(get_env_setting(env, 'DOTCLOUD_DB_SQL_PORT', default=0))
     }
 }
+
 
 
 TIME_ZONE = 'America/New_York'
@@ -30,11 +39,25 @@ SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
 
-MEDIA_ROOT = project_utils.get_folder_path('static')
+MEDIA_ROOT = get_folder_path('static')
 MEDIA_URL = ''
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
-SECRET_KEY = 'wd3p7sqoeu^+$s4@)!-erdl5&jzi0a_c!yn(!jf&@@4#ft%m#h'
+MEDIA_ROOT = '/home/dotcloud/data/media/'
+MEDIA_URL = '/media/'
+STATIC_ROOT = '/home/dotcloud/data/static/'
+STATIC_URL = '/static/'
+ADMIN_MEDIA_PREFIX = '/static/admin/'
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+
+if 'SECRET_KEY' in env:
+    SECRET_KEY = env['SECRET_KEY']
+else:
+    SECRET_KEY = 'wd3p7sqoeu^+$s4@)!-erdl5&jzi0a_c!yn(!jf&@@4#ft%m#h'
 
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -54,7 +77,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'it_is.urls'
 
 TEMPLATE_DIRS = (
-   project_utils.get_folder_path('templates'), 
+   get_folder_path('templates'), 
 )
 
 INSTALLED_APPS = (
@@ -69,8 +92,12 @@ INSTALLED_APPS = (
     'apps.statements'
 )
 
-GOOGLE_ANALYTICS_ACCOUNT = None
-SHARE_THIS_ACCOUNT = None
+GOOGLE_ANALYTICS_ACCOUNT = get_env_setting(env, "GOOGLE_ANALYTICS_ACCOUNT")
+SHARE_THIS_ACCOUNT = get_env_setting(env, "SHARE_THIS_ACCOUNT")
+RECAPTCHA_PUBLIC_KEY = get_env_setting(env, "RECAPTCHA_PUBLIC_KEY")
+RECAPTCHA_PRIVATE_KEY = get_env_setting(env, "RECAPTCHA_PRIVATE_KEY")
+
+
 
 try:
     from local_settings import *
