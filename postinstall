@@ -1,5 +1,5 @@
 #!/bin/sh
-python hellodjango/manage.py syncdb --noinput
+python it_is/manage.py syncdb --noinput
 python mkadmin.py
 mkdir -p /home/dotcloud/data/media /home/dotcloud/data/static
-python hellodjango/manage.py collectstatic --noinput
+python it_is/manage.py collectstatic --noinput
