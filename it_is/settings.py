@@ -54,7 +54,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 STATICFILES_DIRS = (
-    get_folder_path('static')
+    get_folder_path('static'),
 )
 
 if 'SECRET_KEY' in env:
