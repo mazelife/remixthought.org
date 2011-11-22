@@ -95,6 +95,16 @@ INSTALLED_APPS = (
     'it_is.apps.statements'
 )
 
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': get_env_setting(
+            env, "FILE_CACHE_LOCATION", "/tmp/it_is_cache"
+        ),
+    }
+}
+
 GOOGLE_ANALYTICS_ACCOUNT = get_env_setting(env, "GOOGLE_ANALYTICS_ACCOUNT")
 SHARE_THIS_ACCOUNT = get_env_setting(env, "SHARE_THIS_ACCOUNT")
 RECAPTCHA_PUBLIC_KEY = get_env_setting(env, "RECAPTCHA_PUBLIC_KEY")
