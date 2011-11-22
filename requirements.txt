@@ -3,5 +3,5 @@ django-debug-toolbar==0.8.3
 django-coverage==1.0.3
 PyYAML==3.08
 nltk==2.0.1rc1
-recaptcha-client==1.0.3
+#recaptcha-client==1.0.3
 -e svn+http://recaptcha-django.googlecode.com/svn/trunk/#egg=recaptcha_django
