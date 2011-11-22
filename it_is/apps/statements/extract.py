@@ -99,7 +99,7 @@ def from_csv(file_obj, is_excel=False):
 
 def get_sentence_detector():
     # FIXME: This is fucking dumb. There has to be a better way.
-    from apps import statements
+    from it_is.apps import statements
     pth = path.join(
         path.dirname(statements.__file__), 'english.pickle'
     )
