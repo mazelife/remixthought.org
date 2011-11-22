@@ -23,8 +23,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'it_is',
-        'USER': get_env_setting(env, 'DOTCLOUD_DB_SQL_LOGIN'),
-        'PASSWORD': get_env_setting(env, 'DOTCLOUD_DB_SQL_PASSWORD'),
+        'USER': get_env_setting(env, 'DB_SQL_LOGIN'),
+        'PASSWORD': get_env_setting(env, 'SQL_PASSWORD'),
         'HOST': get_env_setting(env, 'DOTCLOUD_DB_SQL_HOST'),
         'PORT': int(get_env_setting(env, 'DOTCLOUD_DB_SQL_PORT', default=0))
     }
